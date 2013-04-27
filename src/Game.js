@@ -5,7 +5,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
 
         this.loadStage();
         this.setupInputs();
-        this.mouse = {x: 0, y: 0};
+        this.mouse = {x: 10, y: 10};
 
         this.fireEvents = [];
 
@@ -44,9 +44,9 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
 
         var beamSprite = PIXI.Sprite.fromFrame("beam.png");
         this.beam = new Entity(beamSprite);
-        this.beam.anchor.x = 0.5;
+        this.beam.anchor.x = this.beam.anchor.y = 0.5;
         this.beam.pos = this.player.pos;
-        this.beam.scale.y = 10;
+        this.beam.scale.y = 30;
         this.beam.scale.x = 2;
         this.stage.addChild(this.beam.sprite);
 
@@ -105,9 +105,9 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
 
         this.camera.targetEntity(this.player);
 
-        var mouseScreen = this.camera.canvasToWorld(this.mouse);
-        var deltaX = mouseScreen.x - this.player.pos.x;
-        var deltaY = mouseScreen.y - this.player.pos.y;
+        var mouseWorld = this.camera.canvasToWorld(this.mouse);
+        var deltaX = mouseWorld.x - this.player.pos.x;
+        var deltaY = mouseWorld.y - this.player.pos.y;
         this.player.rotation(Math.atan2(deltaY, deltaX) - Math.PI/2);
 
         this.beam.rotation(this.player.getRotation());
@@ -137,6 +137,12 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
                 this.toDie.push(i);
             }
             // enemy killed
+            else if (fireEvent && this.physics.lineCircle(this.player.pos, fireEvent, enemy)) {
+                console.log("enemy KILLED!!");
+                this.toDie.push(i);
+                fireEvent = -1; // consume event
+            }
+            /*
             else if (fireEvent &&
                 fireEvent.x > enemy.pos.x - enemy.width/2 &&
                 fireEvent.x < enemy.pos.x + enemy.width/2 &&
@@ -146,6 +152,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
                 this.toDie.push(i);
                 fireEvent = -1; // consume event
             }
+            */
 
             // enemy out of the screen? => IMPOSSIBLE if map built correctly
         }

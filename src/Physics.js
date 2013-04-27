@@ -34,6 +34,42 @@ define(function() {
         return box;
     };
 
+    Physics.prototype.lineSegment = function(a, b, o, p) {
+        var ao = {};
+        var ap = {};
+        var ab = {};
+        ab.x = b.x - a.x;
+        ab.y = b.y - a.y;
+        ap.x = p.x - a.x;
+        ap.y = p.y - a.y;
+        ao.x = o.x - a.x;
+        ao.y = o.y - a.y;
+        return ((ab.x*ap.y - ab.y*ap.x)*(ab.x*ao.y - ab.y*ao.x)<0);
+    };
+
+    Physics.prototype.segmentSegment = function(a, b, o, p) {
+        if (!this.lineSegment(a,b,o,p)) return false;
+        if (!this.lineSegment(o,p,a,b)) return false;
+        return true;
+    };
+
+    Physics.prototype.lineCircle = function(start, end, c) {
+        var s = {
+            x: start.x - c.pos.x,
+            y: start.y - c.pos.y
+        };
+        var e = {
+            x: end.x - c.pos.x,
+            y: end.y - c.pos.y
+        };
+        var dx = e.x - s.x;
+        var dy = e.y - s.y;
+        var dr = Math.sqrt(dx*dx+dy*dy);
+        var deter = s.x*e.y-e.x*s.y;
+        var discriminant = c.radius*c.radius*dr*dr - deter*deter;
+        return (discriminant >= 0);
+    };
+
     return Physics;
 
 });

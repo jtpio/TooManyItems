@@ -5,9 +5,11 @@ define(function() {
         this.position = this.sprite.position;
         this.scale = this.sprite.scale;
         this.anchor = this.sprite.anchor;
+        this.sprite.rotation = 0;
         this.pos = {x: sprite.position.x, y: sprite.position.y};
         this.width = this.sprite.width;
         this.height = this.sprite.height;
+        this.radius = Math.max(this.width/2, this.height/2);
     };
 
     Entity.prototype.moveLeft = function(delta) {
