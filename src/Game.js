@@ -6,6 +6,10 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         this.setupInputs();
         this.mouse = {x: 0, y: 0};
 
+        this.fireEvents = [];
+
+        this.score = 0;
+
         this.last = new Date().getTime();
     };
 
@@ -37,6 +41,13 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         // add enemies container
         this.enemies = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.enemies);
+
+        // score text
+        this.scoreText = new PIXI.Text("Score: " + this.score, "bold italic 60px Arial", "#3e1707", "#a4410e", 3);
+        this.scoreText.position.x = 20;
+        this.scoreText.position.y = Conf.canvas.height - 50;
+        this.scoreText.anchor.y= 0.5;
+        this.stage.addChild(this.scoreText);
     };
 
     Game.prototype.setupInputs = function() {
@@ -49,7 +60,9 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         this.renderer.renderer.view.addEventListener("click", function(data) {
             console.log("click on stage");
             self.sound.play("sound_muted");
+            self.fireEvents.push(data);
         }, true);
+
     };
 
     Game.prototype.tick = function() {
@@ -74,6 +87,9 @@ define(['Screen' ,'Input'], function(Screen, Input) {
 
         if (Math.random() < 0.1) this.spawEnemy();
 
+        // retrieve fire event
+        var fireEvent = this.fireEvents.shift();
+
         // update enemies
         for (var i = 0; i < this.enemies.children.length; i++) {
             var enemy = this.enemies.children[i];
@@ -82,11 +98,27 @@ define(['Screen' ,'Input'], function(Screen, Input) {
             deltaY = this.player.position.y - enemy.position.y;
             enemy.rotation = Math.atan2(deltaY, deltaX) - Math.PI/2;
             var self = this;
+
+            // enemy out of the screen?
             if (enemy.position.x < -enemy.width) {
-                console.log("removed an enemy");
+                //console.log("removed an enemy");
                 this.enemies.removeChild(enemy);
             }
+
+            // enemy killed
+            if (fireEvent &&
+                fireEvent.x > enemy.position.x - enemy.width/2 &&
+                fireEvent.x < enemy.position.x + enemy.width/2 &&
+                fireEvent.y > enemy.position.y - enemy.height/2 &&
+                fireEvent.y < enemy.position.y + enemy.height/2) {
+                console.log("enemy KILLED!!");
+                this.enemies.removeChild(enemy);
+                this.score++;
+            }
         }
+
+        // score
+        this.scoreText.setText("Score: " + this.score);
     };
 
     Game.prototype.spawEnemy = function() {
