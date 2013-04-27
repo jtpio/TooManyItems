@@ -63,6 +63,8 @@ define(['Screen' ,'Input'], function(Screen, Input) {
             self.fireEvents.push(data);
         }, true);
 
+        // keyboard inputs
+        this.input = new Input();
     };
 
     Game.prototype.tick = function() {
@@ -87,7 +89,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
 
         if (Math.random() < 0.01) this.spawEnemy();
 
-        // retrieve fire event
+        // consume fire event
         var fireEvent = this.fireEvents.shift();
 
         // update enemies
@@ -119,11 +121,38 @@ define(['Screen' ,'Input'], function(Screen, Input) {
                 console.log("enemy KILLED!!");
                 this.enemies.removeChild(enemy);
                 this.score++;
+                fireEvent = -1; // consume event
             }
         }
 
+        this.performActions();
+
         // score
         this.scoreText.setText("Score: " + this.score);
+    };
+
+    Game.prototype.performActions = function() {
+        for (var i in this.input.actions) {
+            if (this.input.actions[i])
+                this.performAction(i);
+        }
+    };
+
+    Game.prototype.performAction = function(action) {
+        switch(action) {
+            case Conf.actions.up:
+                this.player.position.y -= 4;
+            break;
+            case Conf.actions.down:
+                this.player.position.y += 4;
+            break;
+            case Conf.actions.left:
+                this.player.position.x -= 4;
+            break;
+            case Conf.actions.right:
+                this.player.position.x += 4;
+            break;
+        }
     };
 
     Game.prototype.spawEnemy = function() {

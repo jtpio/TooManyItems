@@ -12,6 +12,8 @@ Conf.ratios = {
 };
 
 Conf.actions = {
+    up: "up",
+    down: "down",
     left: "left",
     right: "right"
 };
