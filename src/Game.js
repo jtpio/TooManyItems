@@ -8,7 +8,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
 
         this.fireEvents = [];
 
-        this.score = 0;
+        this.items = 1; // only the weapon
 
         this.last = new Date().getTime();
     };
@@ -42,12 +42,12 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         this.enemies = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.enemies);
 
-        // score text
-        this.scoreText = new PIXI.Text("Score: " + this.score, "bold italic 60px Arial", "#3e1707", "#a4410e", 3);
-        this.scoreText.position.x = 20;
-        this.scoreText.position.y = Conf.canvas.height - 50;
-        this.scoreText.anchor.y= 0.5;
-        this.stage.addChild(this.scoreText);
+        // itemss text
+        this.itemsText = new PIXI.Text("Items: " + this.items, "bold italic 60px Arial", "#3e1707", "#a4410e", 3);
+        this.itemsText.position.x = 20;
+        this.itemsText.position.y = Conf.canvas.height - 50;
+        this.itemsText.anchor.y= 0.5;
+        this.stage.addChild(this.itemsText);
     };
 
     Game.prototype.setupInputs = function() {
@@ -104,7 +104,12 @@ define(['Screen' ,'Input'], function(Screen, Input) {
             enemy.position.x += deltaX/normalized;
             enemy.position.y += deltaY/normalized;
 
-            var self = this;
+            // enemy hits the player ?
+            if (this.collide(this.player, enemy)) {
+                this.items++;
+                console.log("Haha you got an item!");
+                this.enemies.removeChild(enemy);
+            }
 
             // enemy out of the screen?
             if (enemy.position.x < -enemy.width) {
@@ -120,15 +125,40 @@ define(['Screen' ,'Input'], function(Screen, Input) {
                 fireEvent.y < enemy.position.y + enemy.height/2) {
                 console.log("enemy KILLED!!");
                 this.enemies.removeChild(enemy);
-                this.score++;
                 fireEvent = -1; // consume event
             }
         }
 
         this.performActions();
 
-        // score
-        this.scoreText.setText("Score: " + this.score);
+        // items
+        this.itemsText.setText("Items: " + this.items);
+    };
+
+    Game.prototype.collide = function(a, b) {
+        var x1 = a.position.x - a.anchor.x*a.width;
+        var x2 = a.position.x + (1-a.anchor.x)*a.width;
+        var y1 = a.position.y + a.anchor.y*a.height;
+        var y2 = a.position.y + (1-a.anchor.y)*a.height;
+        var p1 = {x: x1, y: y1};
+        var p2 = {x: x2, y: y1};
+        var p3 = {x: x1, y: y2};
+        var p4 = {x: x2, y: y2};
+        return (
+            this.pointAABB(p1, b) ||
+            this.pointAABB(p2, b) ||
+            this.pointAABB(p3, b) ||
+            this.pointAABB(p4, b)
+        );
+    };
+
+    Game.prototype.pointAABB = function(point, entity) {
+        return (
+            point.x < entity.position.x + entity.width/2 &&
+            point.x > entity.position.x - entity.width/2 &&
+            point.y > entity.position.y - entity.height/2 &&
+            point.y < entity.position.y + entity.height/2
+        );
     };
 
     Game.prototype.performActions = function() {
