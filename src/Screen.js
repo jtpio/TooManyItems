@@ -1,9 +1,10 @@
 define(function() {
 
-    var Screen = function(main, renderer, sound) {
+    var Screen = function(main, renderer, sound, physics) {
         this.main = main;
         this.renderer = renderer;
         this.sound = sound;
+        this.physics = physics;
         this.focus = false;
         this.stage = new PIXI.Stage(0x97c56e, true); // interactive
         this.ui = [];

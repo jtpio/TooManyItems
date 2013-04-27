@@ -1,7 +1,7 @@
 define(['Screen'], function(Screen) {
 
-    var Home = function(main, renderer, sound) {
-        Screen.call(this, main, renderer, sound);
+    var Home = function(main, renderer, sound, physics) {
+        Screen.call(this, main, renderer, sound, physics);
 
         this.loadStage();
         this.setupInputs();

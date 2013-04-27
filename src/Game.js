@@ -1,7 +1,7 @@
 define(['Screen' ,'Input'], function(Screen, Input) {
 
-    var Game = function(main, renderer, sound) {
-        Screen.call(this, main, renderer, sound);
+    var Game = function(main, renderer, sound, physics) {
+        Screen.call(this, main, renderer, sound, physics);
         this.loadStage();
         this.setupInputs();
         this.mouse = {x: 0, y: 0};
@@ -136,29 +136,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
     };
 
     Game.prototype.collide = function(a, b) {
-        var x1 = a.position.x - a.anchor.x*a.width;
-        var x2 = a.position.x + (1-a.anchor.x)*a.width;
-        var y1 = a.position.y + a.anchor.y*a.height;
-        var y2 = a.position.y + (1-a.anchor.y)*a.height;
-        var p1 = {x: x1, y: y1};
-        var p2 = {x: x2, y: y1};
-        var p3 = {x: x1, y: y2};
-        var p4 = {x: x2, y: y2};
-        return (
-            this.pointAABB(p1, b) ||
-            this.pointAABB(p2, b) ||
-            this.pointAABB(p3, b) ||
-            this.pointAABB(p4, b)
-        );
-    };
-
-    Game.prototype.pointAABB = function(point, entity) {
-        return (
-            point.x < entity.position.x + entity.width/2 &&
-            point.x > entity.position.x - entity.width/2 &&
-            point.y > entity.position.y - entity.height/2 &&
-            point.y < entity.position.y + entity.height/2
-        );
+        return this.physics.collisionAABB(a,b);
     };
 
     Game.prototype.performActions = function(dt) {

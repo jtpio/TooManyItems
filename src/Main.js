@@ -1,4 +1,4 @@
-define(['Renderer', 'Sound', 'Home', 'Game'], function(Renderer, Sound, Home, Game) {
+define(['Renderer', 'Physics', 'Sound', 'Home', 'Game'], function(Renderer, Physics, Sound, Home, Game) {
 
     var Main = function() {
         this.sound = new Sound();
@@ -52,9 +52,12 @@ define(['Renderer', 'Sound', 'Home', 'Game'], function(Renderer, Sound, Home, Ga
             stats.domElement.style.top = "0px";
             rendererManager.stats = stats;
 
+            // create physics engine
+            var physics = new Physics();
+
             // loading different screens
-            self.home = new Home(self, rendererManager, self.sound);
-            self.game = new Game(self, rendererManager, self.sound);
+            self.home = new Home(self, rendererManager, self.sound, physics);
+            self.game = new Game(self, rendererManager, self.sound, physics);
 
             // list of screens
             self.screens = [
