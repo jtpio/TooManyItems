@@ -71,7 +71,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         if (!this.focus) return;
         this.renderer.stats.begin();
         var current = new Date().getTime();
-        var dt = (current - this.last) / 1000;
+        var dt = (current - this.last) / 1000; // seconds
         this.update(dt);
         this.renderer.render(this.stage);
         this.last = current;
@@ -101,8 +101,8 @@ define(['Screen' ,'Input'], function(Screen, Input) {
 
             // move
             var normalized = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
-            enemy.position.x += deltaX/normalized;
-            enemy.position.y += deltaY/normalized;
+            enemy.position.x += (deltaX/normalized) * Conf.enemy.speed * dt;
+            enemy.position.y += (deltaY/normalized) * Conf.enemy.speed * dt;
 
             // enemy hits the player ?
             if (this.collide(this.player, enemy)) {
@@ -129,7 +129,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
             }
         }
 
-        this.performActions();
+        this.performActions(dt);
 
         // items
         this.itemsText.setText("Items: " + this.items);
@@ -161,26 +161,26 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         );
     };
 
-    Game.prototype.performActions = function() {
+    Game.prototype.performActions = function(dt) {
         for (var i in this.input.actions) {
             if (this.input.actions[i])
-                this.performAction(i);
+                this.performAction(i, dt);
         }
     };
 
-    Game.prototype.performAction = function(action) {
+    Game.prototype.performAction = function(action, dt) {
         switch(action) {
             case Conf.actions.up:
-                this.player.position.y -= 4;
+                this.player.position.y -= Conf.player.speed * dt;
             break;
             case Conf.actions.down:
-                this.player.position.y += 4;
+                this.player.position.y +=  Conf.player.speed * dt;
             break;
             case Conf.actions.left:
-                this.player.position.x -= 4;
+                this.player.position.x -=  Conf.player.speed * dt;
             break;
             case Conf.actions.right:
-                this.player.position.x += 4;
+                this.player.position.x +=  Conf.player.speed * dt;
             break;
         }
     };

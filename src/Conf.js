@@ -17,3 +17,11 @@ Conf.actions = {
     left: "left",
     right: "right"
 };
+
+Conf.player = {
+    speed: 100
+};
+
+Conf.enemy = {
+    speed: 130
+};
