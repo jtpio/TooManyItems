@@ -1,7 +1,8 @@
-define(['Screen' ,'Input'], function(Screen, Input) {
+define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], function(Screen, Input, Map, Camera, Entity, Player, Enemy) {
 
     var Game = function(main, renderer, sound, physics) {
         Screen.call(this, main, renderer, sound, physics);
+
         this.loadStage();
         this.setupInputs();
         this.mouse = {x: 0, y: 0};
@@ -25,23 +26,34 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         this.tilingSprite.tileScale.y = 1;
         this.stage.addChild(this.tilingSprite);
 
-        // player
-        this.player = PIXI.Sprite.fromFrame("player.png");
-        this.player.anchor.x = this.player.anchor.y = 0.5;
-        this.player.position.x = Conf.canvas.width/2;
-        this.player.position.y = Conf.canvas.height/2;
-        this.stage.addChild(this.player);
+        // map
+        this.map = new Map();
+        this.renderer.addMapToStage(this.map, this.stage);
 
-        this.beam = PIXI.Sprite.fromFrame("beam.png");
+        // initialize camera
+        this.camera = new Camera();
+        this.camera.init(this.map.bounds);
+
+        // player
+        var playerSprite = PIXI.Sprite.fromFrame("player.png");
+        this.player = new Player(playerSprite);
+        this.player.anchor.x = this.player.anchor.y = 0.5;
+        this.player.pos.x = Conf.canvas.width/2;
+        this.player.pos.y = Conf.canvas.height/2;
+        this.stage.addChild(this.player.sprite);
+
+        var beamSprite = PIXI.Sprite.fromFrame("beam.png");
+        this.beam = new Entity(beamSprite);
         this.beam.anchor.x = 0.5;
-        this.beam.position = this.player.position;
+        this.beam.pos = this.player.pos;
         this.beam.scale.y = 10;
         this.beam.scale.x = 2;
-        this.stage.addChild(this.beam);
+        this.stage.addChild(this.beam.sprite);
 
         // add enemies container
-        this.enemies = new PIXI.DisplayObjectContainer();
-        this.stage.addChild(this.enemies);
+        this.enemies = [];
+        this.enemiesSprites = new PIXI.DisplayObjectContainer();
+        this.stage.addChild(this.enemiesSprites);
 
         // items text
         this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Arial", "#000000", "#a4410e", 3);
@@ -50,7 +62,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         this.stage.addChild(this.itemsText);
 
         // timer text
-        this.timerText = new PIXI.Text('0"', "bold 60px Arial", "#000000", "#a4410e", 3);
+        this.timerText = new PIXI.Text('00\'00"', "bold 60px Arial", "#000000", "#a4410e", 3);
         this.timerText.position.x = Conf.canvas.width - 20;
         this.timerText.position.y = 20;
         this.timerText.anchor.x = 1;
@@ -61,14 +73,14 @@ define(['Screen' ,'Input'], function(Screen, Input) {
     Game.prototype.setupInputs = function() {
         var self = this;
         this.renderer.renderer.view.addEventListener("mousemove", function(data) {
-            self.mouse.x = data.x;
-            self.mouse.y = data.y;
+            self.mouse = data;
         }, true);
 
         this.renderer.renderer.view.addEventListener("click", function(data) {
             console.log("click on stage");
             self.sound.play("sound_muted");
-            self.fireEvents.push(data);
+            var mouseWorld = self.camera.canvasToWorld(data);
+            self.fireEvents.push(mouseWorld);
         }, true);
 
         // keyboard inputs
@@ -91,11 +103,14 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         // update timer game
         this.timer += dt;
 
-        var deltaX = this.mouse.x - this.player.position.x;
-        var deltaY = this.mouse.y - this.player.position.y;
-        this.player.rotation = Math.atan2(deltaY, deltaX) - Math.PI/2;
+        this.camera.targetEntity(this.player);
 
-        this.beam.rotation = this.player.rotation;
+        var mouseScreen = this.camera.canvasToWorld(this.mouse);
+        var deltaX = mouseScreen.x - this.player.pos.x;
+        var deltaY = mouseScreen.y - this.player.pos.y;
+        this.player.rotation(Math.atan2(deltaY, deltaX) - Math.PI/2);
+
+        this.beam.rotation(this.player.getRotation());
 
         if (Math.random() < 0.01) this.spawEnemy();
 
@@ -103,47 +118,75 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         var fireEvent = this.fireEvents.shift();
 
         // update enemies
-        for (var i = 0; i < this.enemies.children.length; i++) {
-            var enemy = this.enemies.children[i];
-            deltaX = this.player.position.x - enemy.position.x;
-            deltaY = this.player.position.y - enemy.position.y;
-            enemy.rotation = Math.atan2(deltaY, deltaX) - Math.PI/2;
+        this.toDie = []; // list of dead enemies
+        for (var i = 0; i < this.enemies.length; i++) {
+            var enemy = this.enemies[i];
+            deltaX = this.player.pos.x - enemy.pos.x;
+            deltaY = this.player.pos.y - enemy.pos.y;
+            enemy.rotation(Math.atan2(deltaY, deltaX) - Math.PI/2);
 
             // move
             var normalized = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
-            enemy.position.x += (deltaX/normalized) * Conf.enemy.speed * dt;
-            enemy.position.y += (deltaY/normalized) * Conf.enemy.speed * dt;
+            enemy.pos.x += (deltaX/normalized) * Conf.enemy.speed * dt;
+            enemy.pos.y += (deltaY/normalized) * Conf.enemy.speed * dt;
 
             // enemy hits the player ?
             if (this.collide(this.player, enemy)) {
                 this.items++;
                 console.log("Haha you got an item!");
-                this.enemies.removeChild(enemy);
+                this.toDie.push(i);
             }
-
-            // enemy out of the screen?
-            if (enemy.position.x < -enemy.width) {
-                //console.log("removed an enemy");
-                this.enemies.removeChild(enemy);
-            }
-
             // enemy killed
-            if (fireEvent &&
-                fireEvent.x > enemy.position.x - enemy.width/2 &&
-                fireEvent.x < enemy.position.x + enemy.width/2 &&
-                fireEvent.y > enemy.position.y - enemy.height/2 &&
-                fireEvent.y < enemy.position.y + enemy.height/2) {
+            else if (fireEvent &&
+                fireEvent.x > enemy.pos.x - enemy.width/2 &&
+                fireEvent.x < enemy.pos.x + enemy.width/2 &&
+                fireEvent.y > enemy.pos.y - enemy.height/2 &&
+                fireEvent.y < enemy.pos.y + enemy.height/2) {
                 console.log("enemy KILLED!!");
-                this.enemies.removeChild(enemy);
+                this.toDie.push(i);
                 fireEvent = -1; // consume event
             }
+
+            // enemy out of the screen? => IMPOSSIBLE if map built correctly
         }
 
         this.performActions(dt);
 
+        this.killEnemies();
+        this.updateCamera();
+
         // texts
         this.itemsText.setText("Items: " + this.items);
         this.timerText.setText(Utils.secondsToString(this.timer));
+    };
+
+    Game.prototype.killEnemies = function() {
+        for (var i = this.toDie.length-1; i >= 0; --i) {
+            this.enemiesSprites.removeChild(this.enemies[i].sprite);
+            this.enemies.splice(i, 1);
+        }
+    };
+
+    // convert from world coordinates to camera coordinates
+    Game.prototype.updateCamera = function() {
+        // tiling sprite (background)
+        this.tilingSprite.tilePosition.x = this.camera.x;
+        this.tilingSprite.tilePosition.y = -this.camera.y;
+        // player
+        this.updateEntity(this.player);
+        // beam
+        this.updateEntity(this.beam);
+        // enemies
+        for (var i = 0; i < this.enemies.length; i++) {
+            this.updateEntity(this.enemies[i]);
+        }
+        this.map.update(this.camera);
+    };
+
+    Game.prototype.updateEntity = function(entity) {
+        var posScreen = this.camera.transform(entity.pos);
+        entity.position.x = posScreen.x;
+        entity.position.y = posScreen.y;
     };
 
     Game.prototype.collide = function(a, b) {
@@ -160,28 +203,29 @@ define(['Screen' ,'Input'], function(Screen, Input) {
     Game.prototype.performAction = function(action, dt) {
         switch(action) {
             case Conf.actions.up:
-                this.player.position.y -= Conf.player.speed * dt;
+                this.player.pos.y -= Conf.player.speed * dt;
             break;
             case Conf.actions.down:
-                this.player.position.y +=  Conf.player.speed * dt;
+                this.player.pos.y +=  Conf.player.speed * dt;
             break;
             case Conf.actions.left:
-                this.player.position.x -=  Conf.player.speed * dt;
+                this.player.pos.x -=  Conf.player.speed * dt;
             break;
             case Conf.actions.right:
-                this.player.position.x +=  Conf.player.speed * dt;
+                this.player.pos.x +=  Conf.player.speed * dt;
             break;
         }
     };
 
     Game.prototype.spawEnemy = function() {
         // new enemy
-        var enemy = PIXI.Sprite.fromFrame("enemy.png");
+        var enemySprite = PIXI.Sprite.fromFrame("enemy.png");
+        var enemy = new Enemy(enemySprite);
         enemy.anchor.x = enemy.anchor.y = 0.5;
-        if (Math.random() < 0.5) enemy.position.x = Conf.canvas.width + enemy.width;
-        else enemy.position.x = -enemy.width;
-        enemy.position.y = Utils.random(0, Conf.canvas.height);
-        this.enemies.addChild(enemy);
+        enemy.pos.x = Conf.canvas.width;
+        enemy.pos.y = Utils.random(0, Conf.canvas.height);
+        this.enemies.push(enemy);
+        this.enemiesSprites.addChild(enemy.sprite);
     };
 
     return Game;

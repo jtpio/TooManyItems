@@ -27,9 +27,9 @@ define(function() {
 
     Physics.prototype.entityToBox = function(entity) {
         var box = {};
-        box.x = entity.position.x - entity.anchor.x*entity.width;
+        box.x = entity.pos.x - entity.anchor.x*entity.width;
         box.w = entity.width;
-        box.y = entity.position.y + entity.anchor.y*entity.height;
+        box.y = entity.pos.y + entity.anchor.y*entity.height;
         box.h = entity.height;
         return box;
     };

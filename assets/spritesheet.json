@@ -8,9 +8,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":47},
 	"sourceSize": {"w":9,"h":47}
 },
+"block.png":
+{
+	"frame": {"x":13,"y":2,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
 "enemy.png":
 {
-	"frame": {"x":13,"y":2,"w":64,"h":32},
+	"frame": {"x":47,"y":2,"w":64,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":32},
@@ -18,7 +26,7 @@
 },
 "play.png":
 {
-	"frame": {"x":79,"y":2,"w":286,"h":177},
+	"frame": {"x":113,"y":2,"w":286,"h":177},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":286,"h":177},
@@ -26,19 +34,11 @@
 },
 "player.png":
 {
-	"frame": {"x":367,"y":2,"w":64,"h":32},
+	"frame": {"x":401,"y":2,"w":64,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":32},
 	"sourceSize": {"w":64,"h":32}
-},
-"tiles.jpeg":
-{
-	"frame": {"x":433,"y":2,"w":64,"h":64},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
-	"sourceSize": {"w":64,"h":64}
 },
 "tiles.png":
 {

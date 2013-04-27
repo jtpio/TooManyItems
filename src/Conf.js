@@ -5,6 +5,12 @@ Conf.canvas = {
     height: 550
 };
 
+
+Conf.camera = {
+    width: 1024,
+    height: 550
+};
+
 // to go fullscreen
 Conf.ratios = {
     x: window.innerWidth / Conf.canvas.width,
@@ -19,9 +25,15 @@ Conf.actions = {
 };
 
 Conf.player = {
-    speed: 100
+    speed: 150
 };
 
 Conf.enemy = {
-    speed: 130
+    speed: 180
+};
+
+Conf.map = {
+    width: 50, // in blocks of 32px
+    height: 50,// in blocks of 32px
+    tileSize: 32
 };
