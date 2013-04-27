@@ -9,6 +9,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         this.fireEvents = [];
 
         this.items = 1; // only the weapon
+        this.timer = 0;
 
         this.last = new Date().getTime();
     };
@@ -45,9 +46,16 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         // items text
         this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Arial", "#000000", "#a4410e", 3);
         this.itemsText.position.x = 20;
-        this.itemsText.position.y = Conf.canvas.height - 50;
-        this.itemsText.anchor.y= 0.5;
+        this.itemsText.position.y = 20;
         this.stage.addChild(this.itemsText);
+
+        // timer text
+        this.timerText = new PIXI.Text('0"', "bold 60px Arial", "#000000", "#a4410e", 3);
+        this.timerText.position.x = Conf.canvas.width - 20;
+        this.timerText.position.y = 20;
+        this.timerText.anchor.x = 1;
+
+        this.stage.addChild(this.timerText);
     };
 
     Game.prototype.setupInputs = function() {
@@ -80,7 +88,9 @@ define(['Screen' ,'Input'], function(Screen, Input) {
     };
 
     Game.prototype.update = function(dt) {
-        //this.tilingSprite.tilePosition.x += 1;
+        // update timer game
+        this.timer += dt;
+
         var deltaX = this.mouse.x - this.player.position.x;
         var deltaY = this.mouse.y - this.player.position.y;
         this.player.rotation = Math.atan2(deltaY, deltaX) - Math.PI/2;
@@ -131,8 +141,9 @@ define(['Screen' ,'Input'], function(Screen, Input) {
 
         this.performActions(dt);
 
-        // items
+        // texts
         this.itemsText.setText("Items: " + this.items);
+        this.timerText.setText(Utils.secondsToString(this.timer));
     };
 
     Game.prototype.collide = function(a, b) {

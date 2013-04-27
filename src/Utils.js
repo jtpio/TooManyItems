@@ -17,3 +17,14 @@ Utils.transpose = function(matrix) {
     }
     return transposed;
 };
+
+Utils.secondsToString = function(seconds) {
+    var min = Math.floor(seconds/60);
+    var s = Math.round(seconds - min * 60);
+
+    var res = s + '"';
+    if (s < 10) res = "0" + res;
+    res = min + '\'' + res;
+    if (min < 10) res = "0" + res;
+    return res;
+};
