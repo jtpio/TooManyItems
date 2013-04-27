@@ -42,8 +42,8 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         this.enemies = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.enemies);
 
-        // itemss text
-        this.itemsText = new PIXI.Text("Items: " + this.items, "bold italic 60px Arial", "#3e1707", "#a4410e", 3);
+        // items text
+        this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Arial", "#000000", "#a4410e", 3);
         this.itemsText.position.x = 20;
         this.itemsText.position.y = Conf.canvas.height - 50;
         this.itemsText.anchor.y= 0.5;
