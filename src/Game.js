@@ -85,7 +85,7 @@ define(['Screen' ,'Input'], function(Screen, Input) {
 
         this.beam.rotation = this.player.rotation;
 
-        if (Math.random() < 0.1) this.spawEnemy();
+        if (Math.random() < 0.01) this.spawEnemy();
 
         // retrieve fire event
         var fireEvent = this.fireEvents.shift();
@@ -93,10 +93,15 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         // update enemies
         for (var i = 0; i < this.enemies.children.length; i++) {
             var enemy = this.enemies.children[i];
-            enemy.position.x -= 3;
             deltaX = this.player.position.x - enemy.position.x;
             deltaY = this.player.position.y - enemy.position.y;
             enemy.rotation = Math.atan2(deltaY, deltaX) - Math.PI/2;
+
+            // move
+            var normalized = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
+            enemy.position.x += deltaX/normalized;
+            enemy.position.y += deltaY/normalized;
+
             var self = this;
 
             // enemy out of the screen?
@@ -125,7 +130,8 @@ define(['Screen' ,'Input'], function(Screen, Input) {
         // new enemy
         var enemy = PIXI.Sprite.fromFrame("enemy.png");
         enemy.anchor.x = enemy.anchor.y = 0.5;
-        enemy.position.x = Conf.canvas.width + enemy.width;
+        if (Math.random() < 0.5) enemy.position.x = Conf.canvas.width + enemy.width;
+        else enemy.position.x = -enemy.width;
         enemy.position.y = Utils.random(0, Conf.canvas.height);
         this.enemies.addChild(enemy);
     };
