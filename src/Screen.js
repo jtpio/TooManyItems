@@ -6,7 +6,11 @@ define(function() {
         this.sound = sound;
         this.physics = physics;
         this.focus = false;
-        this.stage = new PIXI.Stage(0x000000, true); // interactive
+        this.newStage();
+    };
+
+    Screen.prototype.newStage = function() {
+        this.stage = new PIXI.Stage(0x000000, true); // interactive black
         this.ui = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.ui);
     };

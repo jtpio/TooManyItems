@@ -48,7 +48,7 @@ Conf.actions = {
 
 Conf.player = {
     speed: 180,
-    maxItems: 42,
+    maxItems: 4,
     states: {
         WAIT: 1,
         PLAYING: 2,

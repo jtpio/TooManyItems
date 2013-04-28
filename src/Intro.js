@@ -6,6 +6,7 @@ define(['Screen'], function(Screen) {
         this.texts = Conf.intro.sentences;
         this.posText = 0;
         this.ancientSpeaking = true;
+        this.tweenTime = 100; // 2000
         this.loadStage();
         this.loadTweens();
         this.last = new Date().getTime();
@@ -51,7 +52,7 @@ define(['Screen'], function(Screen) {
         var self = this;
         var position = {val:0};
         var target = {val:1};
-        this.tweenFadeIn = new TWEEN.Tween(position).to(target, 2000);
+        this.tweenFadeIn = new TWEEN.Tween(position).to(target, self.tweenTime);
         this.tweenFadeIn.onUpdate(function() {
             self.text.alpha = position.val;
         });
@@ -62,7 +63,7 @@ define(['Screen'], function(Screen) {
 
         var position1 = {val:0};
         var target1 = {val:1};
-        this.tweenWait = new TWEEN.Tween(position1).to(target1, 2000);
+        this.tweenWait = new TWEEN.Tween(position1).to(target1, self.tweenTime);
         this.tweenWait.onUpdate(function() {
             // nothing
         });
@@ -73,7 +74,7 @@ define(['Screen'], function(Screen) {
 
         var position2 = {val:0};
         var target2 = {val:1};
-        this.tweenFadeOut = new TWEEN.Tween(position2).to(target2, 2000);
+        this.tweenFadeOut = new TWEEN.Tween(position2).to(target2, self.tweenTime);
         this.tweenFadeOut.onUpdate(function() {
             self.text.alpha = 1-position2.val;
         });

@@ -3,98 +3,143 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
     var Game = function(main, renderer, sound, physics) {
         Screen.call(this, main, renderer, sound, physics);
-
-        this.loadStage();
-        this.setupInputs();
-        this.mouse = {x: 10, y: 10};
-
-        this.fireEvents = [];
-
-        this.items = 1; // only the weapon
-        this.timer = 0;
-
-        this.last = new Date().getTime();
+        this.reset(true);
     };
 
     Game.constructor = Game;
     Game.prototype = Object.create(Screen.prototype);
 
-    Game.prototype.loadStage = function() {
+    Game.prototype.loadStage = function(firstLoad) {
+
+        if (firstLoad) {
+            // tile texture
+            var tileTexture = PIXI.Texture.fromImage("assets/sprites/tiles.png");
+            this.tilingSprite = new PIXI.TilingSprite(tileTexture, Conf.canvas.width, Conf.canvas.height);
+            this.addToStage(this.tilingSprite);
+            // map
+            this.map = new Map();
+            this.renderer.addMapToStage(this.map, this.stage);
+            // initialize camera
+            this.camera = new Camera();
+            // aiming line
+            var aimSprite = PIXI.Sprite.fromFrame("aim.png");
+            this.aim = new Entity(aimSprite);
+            this.addToStage(this.aim.sprite);
+            // player
+            var playerSprite = PIXI.Sprite.fromFrame("player.png");
+            this.player = new Player(playerSprite);
+            this.addToStage(this.player.sprite);
+            // enemies container
+            this.enemyManager = new EnemyManager(this);
+            this.enemyManager.addContainersToStage();
+            // items text
+            this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.ui.addChild(this.itemsText);
+            // timer text
+            this.timerText = new PIXI.Text('00\'00"', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.ui.addChild(this.timerText);
+            // lose text
+            this.endText = new PIXI.Text('You survived ', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.ui.addChild(this.endText);
+            // restart text
+            this.restartText = new PIXI.Text('Restart?', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.restartText.click = $.proxy(function() {
+                this.restart();
+            }, this);
+            this.ui.addChild(this.restartText);
+        }
+
         // tile texture
-        var texture = PIXI.Texture.fromImage("assets/sprites/tiles.png");
-        this.tilingSprite = new PIXI.TilingSprite(texture, Conf.canvas.width, Conf.canvas.height);
         this.tilingSprite.tileScale.x = 1;
         this.tilingSprite.tileScale.y = 1;
-        this.addToStage(this.tilingSprite);
-
-        // map
-        this.map = new Map();
-        this.renderer.addMapToStage(this.map, this.stage);
+        // reset map
+        // TODO
 
         // initialize camera
-        this.camera = new Camera();
         this.camera.init(this.map.bounds);
-
-        // aiming line
-        var aimSprite = PIXI.Sprite.fromFrame("aim.png");
-        this.aim = new Entity(aimSprite);
+        // aim
         this.aim.anchor.x = this.aim.anchor.y = 0.5;
         this.aim.scale.x = 100;
         this.aim.scale.y = 5;
-        this.addToStage(this.aim.sprite);
 
         // player
-        var playerSprite = PIXI.Sprite.fromFrame("player.png");
-        this.player = new Player(playerSprite);
         this.player.anchor.x = this.player.anchor.y = 0.5;
         this.player.pos.x = Conf.canvas.width/2;
         this.player.pos.y = Conf.canvas.height/2;
-        this.addToStage(this.player.sprite);
 
         this.aim.pos = this.player.pos;
 
-        // enemies container
-        this.enemyManager = new EnemyManager(this);
-        this.enemyManager.addContainersToStage(this.stage);
-
         // items text
-        this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+        this.itemsText.setText("Items: " + this.items);
         this.itemsText.position.x = 20;
         this.itemsText.position.y = 20;
-        this.ui.addChild(this.itemsText);
 
         // timer text
-        this.timerText = new PIXI.Text('00\'00"', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+        this.timerText.setText('00\'00"');
         this.timerText.position.x = Conf.canvas.width - 20;
         this.timerText.position.y = 20;
         this.timerText.anchor.x = 1;
 
-        this.ui.addChild(this.timerText);
+        // lose text
+        this.endText.setText('You survived ');
+        this.endText.position.x = Conf.canvas.width/2;
+        this.endText.position.y = Conf.canvas.height/2 - 100;
+        this.endText.anchor.x = this.endText.anchor.y = 0.5;
 
-        // sounds
-        this.sound.sounds["footsteps_1"].playing = false;
+        // restart text
+        this.restartText.setText('Restart?');
+        this.restartText.position.x = Conf.canvas.width/2;
+        this.restartText.position.y = Conf.canvas.height/2 + 100;
+        this.restartText.anchor.x = this.restartText.anchor.y = 0.5;
     };
 
-    Game.prototype.setupInputs = function() {
+    Game.prototype.setupInputs = function(firstLoad) {
+        if (!firstLoad) return;
         var self = this;
         this.renderer.renderer.view.addEventListener("mousemove", function(data) {
             self.mouse = data;
         }, true);
 
-        this.renderer.renderer.view.addEventListener("click", function(data) {
+
+        this.clickListener = function(data) {
             if (self.focus && self.player.state == Conf.player.states.PLAYING) {
                 self.sound.play("beam");
-                var mouseWorld = self.camera.canvasToWorld(data);
+                var mouseWorld = self.camera.canvasToWorld(data.global);
                 self.fireEvents.push(mouseWorld);
             }
-        }, true);
+        };
+
+        //this.renderer.renderer.view.addEventListener("click", self.clickListener, true);
+        this.stage.click = self.clickListener;
 
         // keyboard inputs
         this.input = new Input();
     };
 
+    Game.prototype.reset = function(firstLoad) {
+        this.loadStage(firstLoad);
+        this.setupInputs(firstLoad);
+        this.items = 1; // only the weapon
+        this.timer = 0;
+        this.fireEvents = [];
+        this.last = new Date().getTime();
+    };
+
     Game.prototype.start = function() {
+        this.endText.visible = false;
+        this.restartText.visible = false;
+        this.endText.setInteractive(false);
+        this.restartText.setInteractive(false);
         this.player.state = Conf.player.states.PLAYING;
+     };
+
+     Game.prototype.dispose = function() {
+        this.enemyManager.dispose();
+     };
+
+     Game.prototype.restart = function() {
+        this.reset();
+        this.start();
      };
 
     Game.prototype.tick = function() {
@@ -111,14 +156,15 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
     Game.prototype.update = function(dt) {
         var self = this;
+
+        switch (this.player.state) {
+            case Conf.player.states.LOST:
+                this.endText.setText("You survived " + Utils.secondsToString(this.timer));
+                return;
+
+        }
         // update timer game
         this.timer += dt;
-
-        if (this.items >= Conf.player.maxItems) {
-            this.player.states = Conf.player.states.LOST;
-            return;
-        }
-
         this.camera.targetEntity(this.player);
 
         var mouseWorld = {
@@ -157,25 +203,30 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             tween.start();
         }
 
-        this.enemyManager.update(dt, fireEvent);
-
-        // inputs
-        this.performActions(dt);
-
-        // physics
-        //this.collisions(dt);
+        if (this.items >= Conf.player.maxItems) {
+            this.lose();
+            return;
+        }
 
         // updates
+        this.enemyManager.update(dt, fireEvent);
+        this.performActions(dt);
         this.updateCamera();
-        // player bounds check (enemies can go out of the screen, WHO CARES??)
         this.boundsCheck(this.player);
-
         // texts
         this.itemsText.setText("Items: " + this.items);
         this.timerText.setText(Utils.secondsToString(this.timer));
 
         // TWEEN
         TWEEN.update();
+    };
+
+    Game.prototype.lose = function() {
+        this.player.state = Conf.player.states.LOST;
+        this.endText.setInteractive(true);
+        this.restartText.setInteractive(true);
+        this.endText.visible = true;
+        this.restartText.visible = true;
     };
 
     // convert from world coordinates to camera coordinates

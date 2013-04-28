@@ -10,8 +10,16 @@ define(['Enemy'], function(Enemy){
     };
 
     EnemyManager.prototype.addContainersToStage = function(stage) {
-        stage.addChild(this.enemiesSprites);
-        stage.addChild(this.itemsSprites);
+        this.game.addToStage(this.enemiesSprites);
+        this.game.addToStage(this.itemsSprites);
+    };
+
+    EnemyManager.prototype.dispose = function() {
+        for (var i = 0; i < this.enemies.length; i++) {
+            var enemy = this.enemies[i];
+            if (enemy.item !== null) this.itemsSprites.removeChild(enemy.item.sprite);
+            this.enemiesSprites.removeChild(enemy.sprite);
+        }
     };
 
     EnemyManager.prototype.update = function(dt, fireEvent) {
@@ -34,12 +42,6 @@ define(['Enemy'], function(Enemy){
                     break;
             }
 
-            /*
-            // enemy hits the player ?
-            if (g.collide(g.player, enemy)) {
-
-            }
-            */
             // enemy killed
             if (fireEvent && g.physics.lineCircle(g.player.pos, fireEvent, enemy)) {
                 this.toDie.push(i);
