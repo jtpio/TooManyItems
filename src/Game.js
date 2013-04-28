@@ -126,6 +126,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
     };
 
     Game.prototype.start = function() {
+        this.input = new Input();
         this.endText.visible = false;
         this.restartText.visible = false;
         this.endText.setInteractive(false);

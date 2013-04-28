@@ -1,4 +1,4 @@
-define(['Screen'], function(Screen) {
+define(['Screen', 'Input'], function(Screen, Input) {
 
     var Intro = function(main, renderer, sound, physics) {
         Screen.call(this, main, renderer, sound, physics);
@@ -6,7 +6,7 @@ define(['Screen'], function(Screen) {
         this.texts = Conf.intro.sentences;
         this.posText = 0;
         this.ancientSpeaking = true;
-        this.tweenTime = 100; // 2000
+        this.tweenTime = 1000; // 2000
         this.loadStage();
         this.loadTweens();
         this.last = new Date().getTime();
@@ -88,9 +88,7 @@ define(['Screen'], function(Screen) {
                     self.tweenFadeIn.start();
                     break;
                 case self.texts.length: // finished
-                    self.main.intro.hide();
-                    self.main.game.show();
-                    self.main.game.start();
+                    self.play(self);
                     break;
                 default:
                     self.text.setText(self.texts[self.posText]);
@@ -102,7 +100,14 @@ define(['Screen'], function(Screen) {
     };
 
     Intro.prototype.start = function() {
+        this.input = new Input();
         this.tweenFadeIn.start();
+    };
+
+    Intro.prototype.play = function(self) {
+        self.main.intro.hide();
+        self.main.game.show();
+        self.main.game.start();
     };
 
     Intro.prototype.tick = function() {
@@ -116,8 +121,23 @@ define(['Screen'], function(Screen) {
     };
 
     Intro.prototype.update = function(dt) {
-
+        this.performActions(dt);
         TWEEN.update();
+    };
+
+    Intro.prototype.performActions = function(dt) {
+        for (var i in this.input.actions) {
+            if (this.input.actions[i])
+                this.performAction(i, dt);
+        }
+    };
+
+    Intro.prototype.performAction = function(action, dt) {
+        switch(action) {
+            case Conf.actions.escape:
+                this.play(this);
+            break;
+        }
     };
 
     return Intro;

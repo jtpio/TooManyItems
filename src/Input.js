@@ -43,6 +43,12 @@ define(function() {
             case 68: // D
                 action = Conf.actions.right;
             break;
+            case 27: // Escape
+                action = Conf.actions.escape;
+            break;
+            case 67: // C
+                action = Conf.actions.c;
+            break;
         }
         return action;
     };

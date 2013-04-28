@@ -17,14 +17,29 @@ Conf.objects = [
 
 Conf.intro = {
     sentences: [
+        //{text:'Welcome young hero ...', who:'old', t:2000},
         'Welcome young hero ...',
         'Your quest is to save - wait for it -',
         'The princess!',
         'But before leaving, you will need my help.',
         'It is dangerous to leave alone, take this laser beam!',
         'Oh wait!',
-        'You will also need this TV',
-        'and this potato'
+        'You will also need a lot of useful other items',
+        'No thanks, this laser beam is perfectly fine ...',
+        'Take this TV!',
+        'But ...',
+        'And this potato',
+        'WTF?',
+        'And also this table',
+        'Oh stop!'
+    ],
+    who: [
+        'old',
+        'old',
+        'old',
+        'old',
+        'old',
+        'old'
     ]
 };
 
@@ -43,7 +58,10 @@ Conf.actions = {
     up: "up",
     down: "down",
     left: "left",
-    right: "right"
+    right: "right",
+    escape: "escape",
+    enter: "enter",
+    c: "c"
 };
 
 Conf.player = {
