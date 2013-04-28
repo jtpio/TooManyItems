@@ -5,8 +5,8 @@ define(['Entity'], function(Entity) {
         this.height = 0;
         this.grid = [];
 
-        this.items = ['tv', 'potato', 'tv', 'potato', 'tv'];
-        this.nbSourceSpots = 5;
+        this.items = ['tv', 'potato'];
+        this.nbSourceSpots = Conf.map.nbSourceSpots;
         this.generate();
         this.createSourceSpots();
     };
@@ -45,11 +45,12 @@ define(['Entity'], function(Entity) {
         for (var i = 0; i < this.nbSourceSpots; i++) {
             var xSource = Utils.random(2, this.width-2);
             var ySource = Utils.random(2, this.height-2);
-            var source = new Entity(PIXI.Sprite.fromFrame(this.items[i]+"_source.png"));
+            var r = Utils.random(0,this.items.length);
+            var source = new Entity(PIXI.Sprite.fromFrame(this.items[r]+"_source.png"));
             source.pos.x = xSource * this.tileSize;
             source.pos.y = ySource * this.tileSize;
             source.anchor.x = source.anchor.y = 0.5;
-            source.item = this.items[i];
+            source.item = this.items[r];
             this.sourceSpots.push(source);
         }
     };

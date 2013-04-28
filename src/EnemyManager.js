@@ -7,6 +7,7 @@ define(['Enemy'], function(Enemy){
         this.proba = 0.01;
         this.enemiesSprites = new PIXI.DisplayObjectContainer();
         this.itemsSprites = new PIXI.DisplayObjectContainer();
+        Conf.enemy.speed = Conf.enemy.baseSpeed;
     };
 
     EnemyManager.prototype.addContainersToStage = function(stage) {
@@ -37,7 +38,6 @@ define(['Enemy'], function(Enemy){
                 case Conf.enemy.actions.GAVE_ITEM:
                     g.sound.play("hurt");
                     g.items++;
-                    console.log("Haha you got an item!");
                     this.removeItem(enemy);
                     break;
             }
@@ -49,7 +49,7 @@ define(['Enemy'], function(Enemy){
         }
 
         this.killEnemies();
-        this.increaseDifficulty();
+        this.increaseDifficulty(dt);
         // spawn new enemies
         if (Math.random() < this.proba && this.nb < Conf.enemy.max) this.spawEnemy();
     };
@@ -80,8 +80,10 @@ define(['Enemy'], function(Enemy){
         }
     };
 
-    EnemyManager.prototype.increaseDifficulty = function() {
-        //this.proba += 0.01;
+    EnemyManager.prototype.increaseDifficulty = function(dt) {
+        this.proba = (this.game.timer/90) * (this.game.timer/90) / 100;
+        Conf.enemy.speed += dt/2;
+        Conf.enemy.speed = Math.max(Conf.enemy.speed, Conf.enemy.maxSpeed);
     };
 
     EnemyManager.prototype.spawEnemy = function() {
@@ -94,8 +96,8 @@ define(['Enemy'], function(Enemy){
 
         var enemy = new Enemy(enemyWalking);
         enemy.anchor.x = enemy.anchor.y = 0.5;
-        enemy.pos.x = Conf.canvas.width;
-        enemy.pos.y = Utils.random(0, Conf.canvas.height);
+        enemy.pos.x = Utils.random(0, this.game.map.limits.xmax);
+        enemy.pos.y = Utils.random(0, this.game.map.limits.ymax);
         enemy.game = this.game;
         enemy.setTarget(this.game.map.randomSourceSpot());
         enemy.state = Conf.enemy.states.FETCHING;

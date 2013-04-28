@@ -10,7 +10,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
     Game.prototype = Object.create(Screen.prototype);
 
     Game.prototype.loadStage = function(firstLoad) {
-
+        var self = this;
         if (firstLoad) {
             // tile texture
             var tileTexture = PIXI.Texture.fromImage("assets/sprites/tiles.png");
@@ -29,24 +29,35 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             var playerSprite = PIXI.Sprite.fromFrame("player.png");
             this.player = new Player(playerSprite);
             this.addToStage(this.player.sprite);
-            // enemies container
-            this.enemyManager = new EnemyManager(this);
-            this.enemyManager.addContainersToStage();
             // items text
-            this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.itemsText = new PIXI.Text("Items: " + this.items + "/" + Conf.player.maxItems, "bold 60px Peralta", "#000000", "#d5f6ff", 5);
             this.ui.addChild(this.itemsText);
             // timer text
-            this.timerText = new PIXI.Text('00\'00"', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.timerText = new PIXI.Text('00\'00"', "bold 60px Peralta", "#000000", "#d5f6ff", 5);
             this.ui.addChild(this.timerText);
+            // ammo
+            this.ammoSprite = PIXI.Sprite.fromFrame("ammo.png");
+            this.addToStage(this.ammoSprite);
             // lose text
-            this.endText = new PIXI.Text('You survived ', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.endText = new PIXI.Text('You survived ', "bold 60px Peralta", "#000000", "#d5f6ff", 6);
             this.ui.addChild(this.endText);
             // restart text
-            this.restartText = new PIXI.Text('Restart?', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
+            this.restartText = new PIXI.Text('Restart?', "bold 100px Peralta", "#000000", "#d5f6ff", 10);
             this.restartText.click = $.proxy(function() {
+                this.sound.play("buttonReleased");
                 this.restart();
             }, this);
+            this.restartText.mouseover = $.proxy(function() {
+                this.restartText.scale.x = this.restartText.scale.y = 1;
+            }, this);
+            this.restartText.mouseout = $.proxy(function() {
+                this.restartText.scale.x = this.restartText.scale.y = 0.8;
+            }, this);
+            this.restartText.scale.x = this.restartText.scale.y = 0.8;
             this.ui.addChild(this.restartText);
+            // ammo text
+            this.ammoText = new PIXI.Text('Ammo', "bold 20px Peralta", "#000000", "#d5f6ff", 1);
+            this.addToStage(this.ammoText);
         }
 
         // tile texture
@@ -66,8 +77,12 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.player.anchor.x = this.player.anchor.y = 0.5;
         this.player.pos.x = Conf.canvas.width/2;
         this.player.pos.y = Conf.canvas.height/2;
-
+        this.player.reload();
         this.aim.pos = this.player.pos;
+
+        // enemies container
+        this.enemyManager = new EnemyManager(this);
+        this.enemyManager.addContainersToStage();
 
         // items text
         this.itemsText.setText("Items: " + this.items);
@@ -79,6 +94,18 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.timerText.position.x = Conf.canvas.width - 20;
         this.timerText.position.y = 20;
         this.timerText.anchor.x = 1;
+
+        // ammo
+        this.ammoSprite.anchor.x = 0;
+        this.ammoSprite.anchor.y = 0.5;
+        this.ammoSprite.position.x = 20;
+        this.ammoSprite.position.y = Conf.canvas.height - 50;
+        this.ammoSprite.scale.x = this.player.shots;
+
+        this.ammoText.position.x = 50;
+        this.ammoText.position.y = Conf.canvas.height - 50;
+        this.ammoText.anchor.x = 0;
+        this.ammoText.anchor.y = 0.5;
 
         // lose text
         this.endText.setText('You survived ');
@@ -103,7 +130,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
         this.clickListener = function(data) {
             if (self.focus && self.player.state == Conf.player.states.PLAYING) {
-                self.sound.play("beam");
                 var mouseWorld = self.camera.canvasToWorld(data.global);
                 self.fireEvents.push(mouseWorld);
             }
@@ -139,8 +165,14 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
      };
 
      Game.prototype.restart = function() {
+        this.dispose();
         this.reset();
         this.start();
+     };
+
+     Game.prototype.enter = function() {
+        this.player.state = Conf.player.states.WAIT;
+
      };
 
     Game.prototype.tick = function() {
@@ -162,7 +194,8 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             case Conf.player.states.LOST:
                 this.endText.setText("You survived " + Utils.secondsToString(this.timer));
                 return;
-
+            case Conf.player.states.WAIT:
+                return;
         }
         // update timer game
         this.timer += dt;
@@ -179,29 +212,40 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
         // draw laser beam on fire event
         if (fireEvent) {
-            var beamSprite = PIXI.Sprite.fromFrame("beam.png");
-            beamSprite.anchor.x = beamSprite.anchor.y = 0.5;
-            beamSprite.x = this.player.pos.x;
-            beamSprite.y = this.player.pos.y;
-            beamSprite.scale.x = 200;
-            beamSprite.scale.y = 0.25;
-            beamSprite.rotation = this.player.getRotation() + Math.PI/2;
-            this.addToStage(beamSprite);
-            this.stage.swapChildren(beamSprite, this.player.sprite);
+            if (this.player.shots === 0) {
+                fireEvent = -1; // consume
+            } else {
+                this.player.shoot();
+                if (this.player.shots === 0) {
+                    setTimeout(function(){
+                        self.player.reload();
+                    }, 3000);
+                }
+                self.sound.play("beam");
+                var beamSprite = PIXI.Sprite.fromFrame("beam.png");
+                beamSprite.anchor.x = beamSprite.anchor.y = 0.5;
+                beamSprite.x = this.player.pos.x;
+                beamSprite.y = this.player.pos.y;
+                beamSprite.scale.x = 200;
+                beamSprite.scale.y = 0.25;
+                beamSprite.rotation = this.player.getRotation() + Math.PI/2;
+                this.addToStage(beamSprite);
+                this.stage.swapChildren(beamSprite, this.player.sprite);
 
-            var alphaStart = {val:0}; var alphaEnd = {val:1};
-            var tween = new TWEEN.Tween(alphaStart).to(alphaEnd, 1500);
-            tween.onUpdate(function(){
-                beamSprite.alpha = 1-alphaStart.val;
-                var newPos = self.camera.transform(beamSprite);
-                beamSprite.position.x = newPos.x;
-                beamSprite.position.y = newPos.y;
-            });
-            tween.onComplete(function() {
-                self.stage.removeChild(beamSprite);
-            });
-            tween.easing(TWEEN.Easing.Bounce.InOut);
-            tween.start();
+                var alphaStart = {val:0}; var alphaEnd = {val:1};
+                var tween = new TWEEN.Tween(alphaStart).to(alphaEnd, 1500);
+                tween.onUpdate(function(){
+                    beamSprite.alpha = 1-alphaStart.val;
+                    var newPos = self.camera.transform(beamSprite);
+                    beamSprite.position.x = newPos.x;
+                    beamSprite.position.y = newPos.y;
+                });
+                tween.onComplete(function() {
+                    self.stage.removeChild(beamSprite);
+                });
+                tween.easing(TWEEN.Easing.Bounce.InOut);
+                tween.start();
+            }
         }
 
         if (this.items >= Conf.player.maxItems) {
@@ -214,9 +258,10 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.performActions(dt);
         this.updateCamera();
         this.boundsCheck(this.player);
-        // texts
-        this.itemsText.setText("Items: " + this.items);
+        // UI
+        this.itemsText.setText("Items: " + this.items + "/" + Conf.player.maxItems);
         this.timerText.setText(Utils.secondsToString(this.timer));
+        if (!this.player.reloading) this.ammoSprite.scale.x = this.player.shots;
 
         // TWEEN
         TWEEN.update();
@@ -259,31 +304,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         if (entity.pos.y - entity.height/2 < this.map.limits.ymin) entity.pos.y = this.map.limits.ymin + entity.height/2;
         if (entity.pos.y + entity.height/2 > this.map.limits.ymax) entity.pos.y = this.map.limits.ymax - entity.height/2;
     };
-
-    /*
-    Game.prototype.collisions = function(dt) {
-        // player
-        var neighbors = this.map.getAllNeighbors(this.player);
-        for (var i = 0; i < neighbors.length; i++) {
-            if (neighbors[i] !== -1) {
-                var c = this.collide(this.player, neighbors[i]);
-                if (Utils.getBit(c, this.physics.LEFT)) {
-                    this.player.pos.x = neighbors[i].pos.x + neighbors[i].width + 15;
-                }
-                if (Utils.getBit(c, this.physics.TOP)) {
-                    //this.player.pos.y = neighbors[i].pos.y - neighbors[i].height + 15;
-                }
-                if (Utils.getBit(c, this.physics.DOWN)) {
-                    this.player.pos.y = neighbors[i].pos.y + neighbors[i].height -15;
-                }
-                if (Utils.getBit(c, this.physics.RIGHT)) {
-                    //this.player.pos.x = neighbors[i].pos.x - neighbors[i].height - 15;
-                }
-
-            }
-        }
-    };
-    */
 
     Game.prototype.collide = function(a, b) {
         return this.physics.collisionAABB(a,b);

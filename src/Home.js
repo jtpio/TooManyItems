@@ -23,7 +23,7 @@ define(['Screen'], function(Screen) {
         this.addToStage(this.bg);
 
         // title text
-        this.title = new PIXI.Text("Less is Best!", "Bold 60px Peralta", "#000000", "#d5f6ff", 4);
+        this.title = new PIXI.Text("Too Many Items", "80px Peralta", "#006680", "#000000", 10);
         this.title.position.x = Conf.canvas.width/2;
         this.title.position.y = Conf.canvas.height/2 - 100;
         this.title.anchor.x = 0.5;

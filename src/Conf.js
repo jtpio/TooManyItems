@@ -19,7 +19,8 @@ Conf.intro = {
     sentences: [
         //{text:'Welcome young hero ...', who:'old', t:2000},
         'Welcome young hero ...',
-        'Your quest is to save - wait for it -',
+        'Your quest is about to begin',
+        'Go to the castle and save - wait for it -',
         'The princess!',
         'But before leaving, you will need my help.',
         'It is dangerous to leave alone, take this laser beam!',
@@ -30,8 +31,15 @@ Conf.intro = {
         'But ...',
         'And this potato',
         'WTF?',
-        'And also this table',
-        'Oh stop!'
+        'And also this table ... ',
+        'Oh stop that!',
+        'I like to have few items with me, this is my way of life',
+        'I\'m fed up of all these old guys',
+        'trying to give these useless items',
+        'I prefer to keep the minimum with me',
+        'Nooo you don\'t understand, they are very essential!',
+        'Come here and take them',
+        'No way, go away!'
     ],
     who: [
         'old',
@@ -39,7 +47,23 @@ Conf.intro = {
         'old',
         'old',
         'old',
-        'old'
+        'old',
+        'old',
+        'old',
+        'hero',
+        'old',
+        'hero',
+        'old',
+        'hero',
+        'old',
+        'hero',
+        'hero',
+        'hero',
+        'hero',
+        'hero',
+        'old',
+        'old',
+        'hero'
     ]
 };
 
@@ -66,18 +90,21 @@ Conf.actions = {
 
 Conf.player = {
     speed: 180,
-    maxItems: 4,
+    maxItems: 20,
     states: {
         WAIT: 1,
         PLAYING: 2,
         LOST: 3,
         WIN: 4
-    }
+    },
+    nbShots: 7
 };
 
 Conf.enemy = {
     max: 50,
+    baseSpeed: 200,
     speed: 200,
+    maxSpeed: 500,
     states: {
         STOPPED: 1,
         FETCHING: 2,
@@ -94,5 +121,6 @@ Conf.enemy = {
 Conf.map = {
     width: 50, // in blocks of 32px
     height: 50,// in blocks of 32px
-    tileSize: 32
+    tileSize: 32,
+    nbSourceSpots: 7
 };

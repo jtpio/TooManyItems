@@ -27,6 +27,7 @@ define(function() {
     Input.prototype.keyToAction = function(key) {
         var action = null;
         switch(key) {
+            case 38: // UP
             case 87: // W
             case 90: // Z
                 action = Conf.actions.up;
@@ -36,6 +37,7 @@ define(function() {
             case 81: // Q
                 action = Conf.actions.left;
             break;
+            case 40: // DOWN
             case 83: // S
                 action = Conf.actions.down;
             break;
