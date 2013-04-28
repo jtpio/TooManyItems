@@ -8,8 +8,12 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Game'], function(Renderer, Phys
     Main.prototype.loadSounds = function() {
         this.soundsPath = 'assets/sounds/';
         this.soundsNames = [
-            'channel_created.wav',
-            'sound_muted.wav'
+            'beam.mp3',
+            'buttonPressed.mp3',
+            'buttonReleased.mp3',
+            'footsteps_1.mp3',
+            'footsteps_2.mp3',
+            'hurt.mp3'
         ];
 
         var n = this.soundsNames.length;

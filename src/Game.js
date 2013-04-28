@@ -52,18 +52,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
 
         this.aim.pos = this.player.pos;
 
-        // beam
-        /*
-        var beamSprite = PIXI.Sprite.fromFrame("beam.png");
-        this.beam = new Entity(beamSprite);
-        this.beam.anchor.x = this.beam.anchor.y = 0.5;
-        this.beam.pos = this.player.pos;
-        this.beam.scale.y = 30;
-        this.beam.scale.x = 2;
-        this.beam.alpha = 0.5;
-        this.stage.addChild(this.beam.sprite);
-        */
-
         // add enemies container
         this.enemies = [];
         this.enemiesSprites = new PIXI.DisplayObjectContainer();
@@ -82,6 +70,9 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
         this.timerText.anchor.x = 1;
 
         this.stage.addChild(this.timerText);
+
+        // sounds
+        this.sound.sounds["footsteps_1"].playing = false;
     };
 
     Game.prototype.setupInputs = function() {
@@ -92,7 +83,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
 
         this.renderer.renderer.view.addEventListener("click", function(data) {
             console.log("click on stage");
-            self.sound.play("sound_muted");
+            self.sound.play("beam");
             var mouseWorld = self.camera.canvasToWorld(data);
             self.fireEvents.push(mouseWorld);
         }, true);
@@ -140,10 +131,10 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
             this.stage.addChild(beamSprite);
             this.stage.swapChildren(beamSprite, this.player.sprite);
 
-            var alphaStart = {val:0}; var alphaEnd = {val:1000};
-            var tween = new TWEEN.Tween(alphaStart).to(alphaEnd, 1000);
+            var alphaStart = {val:0}; var alphaEnd = {val:1};
+            var tween = new TWEEN.Tween(alphaStart).to(alphaEnd, 1500);
             tween.onUpdate(function(){
-                beamSprite.alpha = 1-alphaStart.val/1000;
+                beamSprite.alpha = 1-alphaStart.val;
                 var newPos = self.camera.transform(beamSprite);
                 beamSprite.position.x = newPos.x;
                 beamSprite.position.y = newPos.y;
@@ -166,6 +157,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
             enemy.move(this.player.pos, dt);
             // enemy hits the player ?
             if (this.collide(this.player, enemy)) {
+                this.sound.play("hurt");
                 this.items++;
                 console.log("Haha you got an item!");
                 this.toDie.push(i);
@@ -238,20 +230,26 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
     };
 
     Game.prototype.performAction = function(action, dt) {
+        var movement = false;
         switch(action) {
             case Conf.actions.up:
                 this.player.pos.y -= Conf.player.speed * dt;
+                movement = true;
             break;
             case Conf.actions.down:
                 this.player.pos.y +=  Conf.player.speed * dt;
+                movement = true;
             break;
             case Conf.actions.left:
                 this.player.pos.x -=  Conf.player.speed * dt;
+                movement = true;
             break;
             case Conf.actions.right:
                 this.player.pos.x +=  Conf.player.speed * dt;
+                movement = true;
             break;
         }
+
     };
 
     Game.prototype.spawEnemy = function() {
