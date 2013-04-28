@@ -7,13 +7,14 @@ define(function() {
         this.physics = physics;
         this.focus = false;
         this.stage = new PIXI.Stage(0x97c56e, true); // interactive
-        this.ui = [];
+        this.ui = new PIXI.DisplayObjectContainer();
+        this.stage.addChild(this.ui);
     };
 
     Screen.prototype.show = function() {
         if (this.focus) return; // already displayed
-        for (var i in this.ui) {
-            this.ui[i].visible = true;
+        for (var i in this.ui.children) {
+            this.ui.children[i].visible = true;
         }
         this.last = new Date().getTime();
         this.focus = true;
@@ -22,9 +23,15 @@ define(function() {
 
     Screen.prototype.hide = function() {
         this.focus = false;
-        for (var i in this.ui) {
-            this.ui[i].visible = false;
+        for (var i in this.ui.children) {
+            this.ui.children[i].visible = false;
         }
+    };
+
+    // always keep the ui on top of everything
+    Screen.prototype.addToStage = function(displayObject) {
+        this.stage.addChild(displayObject);
+        this.stage.swapChildren(displayObject, this.ui);
     };
 
     return Screen;

@@ -9,7 +9,7 @@ define(function() {
         this.pos = {x: sprite.position.x, y: sprite.position.y};
         this.width = this.sprite.width;
         this.height = this.sprite.height;
-        this.radius = Math.max(this.width/2, this.height/2);
+        this.radius =  Math.floor(1.414 * Math.max(this.width/2, this.height/2));
     };
 
     Entity.prototype.moveLeft = function(delta) {

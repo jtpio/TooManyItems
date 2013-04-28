@@ -25,7 +25,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.tilingSprite = new PIXI.TilingSprite(texture, Conf.canvas.width, Conf.canvas.height);
         this.tilingSprite.tileScale.x = 1;
         this.tilingSprite.tileScale.y = 1;
-        this.stage.addChild(this.tilingSprite);
+        this.addToStage(this.tilingSprite);
 
         // map
         this.map = new Map();
@@ -41,7 +41,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.aim.anchor.x = this.aim.anchor.y = 0.5;
         this.aim.scale.x = 100;
         this.aim.scale.y = 5;
-        this.stage.addChild(this.aim.sprite);
+        this.addToStage(this.aim.sprite);
 
         // player
         var playerSprite = PIXI.Sprite.fromFrame("player.png");
@@ -49,27 +49,27 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.player.anchor.x = this.player.anchor.y = 0.5;
         this.player.pos.x = Conf.canvas.width/2;
         this.player.pos.y = Conf.canvas.height/2;
-        this.stage.addChild(this.player.sprite);
+        this.addToStage(this.player.sprite);
 
         this.aim.pos = this.player.pos;
 
         // add enemies container
         this.enemyManager = new EnemyManager(this);
-        this.stage.addChild(this.enemyManager.enemiesSprites);
+        this.enemyManager.addContainersToStage(this.stage);
 
         // items text
-        this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Arial", "#000000", "#a4410e", 3);
+        this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Peralta", "#000000", "#d5f6ff", 3);
         this.itemsText.position.x = 20;
         this.itemsText.position.y = 20;
-        this.stage.addChild(this.itemsText);
+        this.ui.addChild(this.itemsText);
 
         // timer text
-        this.timerText = new PIXI.Text('00\'00"', "bold 60px Arial", "#000000", "#a4410e", 3);
+        this.timerText = new PIXI.Text('00\'00"', "bold 60px Peralta", "#000000", "#d5f6ff", 3);
         this.timerText.position.x = Conf.canvas.width - 20;
         this.timerText.position.y = 20;
         this.timerText.anchor.x = 1;
 
-        this.stage.addChild(this.timerText);
+        this.ui.addChild(this.timerText);
 
         // sounds
         this.sound.sounds["footsteps_1"].playing = false;
@@ -109,6 +109,11 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         // update timer game
         this.timer += dt;
 
+        if (this.items >= Conf.player.maxItems) {
+            this.player.states = Conf.player.states.LOST;
+            return;
+        }
+
         this.camera.targetEntity(this.player);
 
         var mouseWorld = {
@@ -129,7 +134,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             beamSprite.scale.x = 200;
             beamSprite.scale.y = 0.25;
             beamSprite.rotation = this.player.getRotation() + Math.PI/2;
-            this.stage.addChild(beamSprite);
+            this.addToStage(beamSprite);
             this.stage.swapChildren(beamSprite, this.player.sprite);
 
             var alphaStart = {val:0}; var alphaEnd = {val:1};
@@ -157,6 +162,8 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
         // updates
         this.updateCamera();
+        // player bounds check (enemies can go out of the screen, WHO CARES??)
+        this.boundsCheck(this.player);
 
         // texts
         this.itemsText.setText("Items: " + this.items);
@@ -187,7 +194,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         var posScreen = this.camera.transform(entity.pos);
         entity.position.x = posScreen.x;
         entity.position.y = posScreen.y;
-        this.boundsCheck(entity);
     };
 
     Game.prototype.boundsCheck = function(entity) {

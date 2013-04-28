@@ -83,6 +83,10 @@ define(function() {
         return (discriminant >= 0);
     };
 
+    Physics.prototype.circleCircle = function(entity1, entity2, dist) {
+        return (dist < entity1.radius + entity2.radius);
+    };
+
     return Physics;
 
 });

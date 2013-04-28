@@ -5,7 +5,7 @@ define(['Entity'], function(Entity) {
         this.height = 0;
         this.grid = [];
 
-        this.items = ['tv', 'tv', 'tv', 'tv', 'tv'];
+        this.items = ['tv', 'potato', 'tv', 'potato', 'tv'];
         this.nbSourceSpots = 5;
         this.generate();
         this.createSourceSpots();
@@ -43,12 +43,13 @@ define(['Entity'], function(Entity) {
     Map.prototype.createSourceSpots = function() {
         this.sourceSpots = [];
         for (var i = 0; i < this.nbSourceSpots; i++) {
-            var xSource = Utils.random(0, this.width-1);
-            var ySource = Utils.random(0, this.height-1);
-            var source = new Entity(PIXI.Sprite.fromFrame(this.items[i]+'.png'));
+            var xSource = Utils.random(2, this.width-2);
+            var ySource = Utils.random(2, this.height-2);
+            var source = new Entity(PIXI.Sprite.fromFrame(this.items[i]+"_source.png"));
             source.pos.x = xSource * this.tileSize;
             source.pos.y = ySource * this.tileSize;
             source.anchor.x = source.anchor.y = 0.5;
+            source.item = this.items[i];
             this.sourceSpots.push(source);
         }
     };

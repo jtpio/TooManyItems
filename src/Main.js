@@ -2,7 +2,30 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Game'], function(Renderer, Phys
 
     var Main = function() {
         this.sound = new Sound();
-        this.loadSounds();
+        var self = this;
+
+        // google fonts first
+        WebFontConfig = {
+            google: {
+                families: [ 'Peralta', 'Arvo:700italic', 'Podkova:700' ]
+            },
+
+            active: function() {
+            // do something
+                self.loadSounds();
+            }
+
+        };
+        (function() {
+            var wf = document.createElement('script');
+            wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+            '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+            wf.type = 'text/javascript';
+            wf.async = 'true';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wf, s);
+        })();
+
     };
 
     Main.prototype.loadSounds = function() {

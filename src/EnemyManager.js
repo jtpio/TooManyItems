@@ -2,9 +2,16 @@ define(['Enemy'], function(Enemy){
 
     var EnemyManager = function(game) {
         this.game = game;
-        this.nb = 20; // number of enemies
+        this.nb = 0; // current number of enemies
         this.enemies = [];
+        this.proba = 0.01;
         this.enemiesSprites = new PIXI.DisplayObjectContainer();
+        this.itemsSprites = new PIXI.DisplayObjectContainer();
+    };
+
+    EnemyManager.prototype.addContainersToStage = function(stage) {
+        stage.addChild(this.enemiesSprites);
+        stage.addChild(this.itemsSprites);
     };
 
     EnemyManager.prototype.update = function(dt, fireEvent) {
@@ -12,48 +19,73 @@ define(['Enemy'], function(Enemy){
         this.toDie = [];
         for (var i = 0; i < this.enemies.length; i++) {
             var enemy = this.enemies[i];
-            enemy.update(dt);
 
+            // get action from enemy
+            var action = enemy.update(dt);
+            switch(action) {
+                case Conf.enemy.actions.NEW_ITEM:
+                    this.itemsSprites.addChild(enemy.item.sprite);
+                    break;
+                case Conf.enemy.actions.GAVE_ITEM:
+                    g.sound.play("hurt");
+                    g.items++;
+                    console.log("Haha you got an item!");
+                    this.removeItem(enemy);
+                    break;
+            }
+
+            /*
             // enemy hits the player ?
             if (g.collide(g.player, enemy)) {
-                g.sound.play("hurt");
-                g.items++;
-                console.log("Haha you got an item!");
-                this.toDie.push(i);
+
             }
+            */
             // enemy killed
-            else if (fireEvent && g.physics.lineCircle(g.player.pos, fireEvent, enemy)) {
-                console.log("enemy KILLED!!");
+            if (fireEvent && g.physics.lineCircle(g.player.pos, fireEvent, enemy)) {
                 this.toDie.push(i);
             }
         }
 
         this.killEnemies();
-
+        this.increaseDifficulty();
         // spawn new enemies
-        if (Math.random() < 0.02) this.spawEnemy();
+        if (Math.random() < this.proba && this.nb < Conf.enemy.max) this.spawEnemy();
     };
 
     EnemyManager.prototype.updateCamera = function() {
         for (var i = 0; i < this.enemies.length; i++) {
-            this.game.updateEntityCamera(this.enemies[i]);
+            var enemy = this.enemies[i];
+            this.game.updateEntityCamera(enemy);
+            if (enemy.item !== null) {
+                this.game.updateEntityCamera(enemy.item);
+            }
+        }
+    };
+
+    EnemyManager.prototype.removeItem = function(enemy) {
+        if (enemy.item !== null) {
+            this.itemsSprites.removeChild(enemy.item.sprite);
+            enemy.item = null;
         }
     };
 
     EnemyManager.prototype.killEnemies = function() {
         for (var i = this.toDie.length-1; i >= 0; --i) {
+            this.removeItem(this.enemies[i]);
             this.enemiesSprites.removeChild(this.enemies[i].sprite);
             this.enemies.splice(i, 1);
+            this.nb--;
         }
     };
 
-    EnemyManager.prototype.spawEnemy = function() {
-        // new enemy
-        var enemySprite = PIXI.Sprite.fromFrame("enemy.png");
+    EnemyManager.prototype.increaseDifficulty = function() {
+        //this.proba += 0.01;
+    };
 
+    EnemyManager.prototype.spawEnemy = function() {
         var enemyWalkingTextures = [];
-        for (var i = 0; i < 7; i++)  {
-            var texture = PIXI.Texture.fromFrame("enemy_" + (i+1) + ".png");
+        for (var i = 0; i < 5; i++)  {
+            var texture = PIXI.Texture.fromFrame("oldEnemy_" + (i+1) + ".png");
             enemyWalkingTextures.push(texture);
         }
         var enemyWalking = new PIXI.MovieClip(enemyWalkingTextures);
@@ -62,12 +94,9 @@ define(['Enemy'], function(Enemy){
         enemy.anchor.x = enemy.anchor.y = 0.5;
         enemy.pos.x = Conf.canvas.width;
         enemy.pos.y = Utils.random(0, Conf.canvas.height);
-        enemy.map = this.game.map;
-        enemy.setTarget({pos:{
-            x: enemy.pos.x + 10,
-            y: enemy.pos.y + 10
-        }});
-        enemy.state = Conf.enemy.states.CRAZY;
+        enemy.game = this.game;
+        enemy.setTarget(this.game.map.randomSourceSpot());
+        enemy.state = Conf.enemy.states.FETCHING;
 
         this.enemies.push(enemy);
         this.enemiesSprites.addChild(enemy.sprite);
@@ -76,6 +105,8 @@ define(['Enemy'], function(Enemy){
         enemyWalking.loop = true;
         enemyWalking.animationSpeed = 0.3;
         enemyWalking.play();
+
+        this.nb++;
     };
 
     return EnemyManager;

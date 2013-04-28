@@ -25,16 +25,29 @@ Conf.actions = {
 };
 
 Conf.player = {
-    speed: 180
+    speed: 180,
+    maxItems: 42,
+    states: {
+        WAIT: 1,
+        PLAYING: 2,
+        LOST: 3,
+        WIN: 4
+    }
 };
 
 Conf.enemy = {
+    max: 50,
     speed: 200,
     states: {
         STOPPED: 1,
         FETCHING: 2,
         BRINGING: 3,
         CRAZY: 4
+    },
+    actions: {
+        NONE: 0,
+        NEW_ITEM: 1,
+        GAVE_ITEM: 2
     }
 };
 
