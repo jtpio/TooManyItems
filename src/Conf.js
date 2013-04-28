@@ -5,6 +5,28 @@ Conf.canvas = {
     height: 550
 };
 
+Conf.home = {
+    nbObjects: 20
+};
+
+Conf.objects = [
+    'tv',
+    'potato',
+    'potatoSource'
+];
+
+Conf.intro = {
+    sentences: [
+        'Welcome young hero ...',
+        'Your quest is to save - wait for it -',
+        'The princess!',
+        'But before leaving, you will need my help.',
+        'It is dangerous to leave alone, take this laser beam!',
+        'Oh wait!',
+        'You will also need this TV',
+        'and this potato'
+    ]
+};
 
 Conf.camera = {
     width: 1024,

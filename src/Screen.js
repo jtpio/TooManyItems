@@ -6,7 +6,7 @@ define(function() {
         this.sound = sound;
         this.physics = physics;
         this.focus = false;
-        this.stage = new PIXI.Stage(0x97c56e, true); // interactive
+        this.stage = new PIXI.Stage(0x000000, true); // interactive
         this.ui = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.ui);
     };

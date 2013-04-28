@@ -53,7 +53,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
         this.aim.pos = this.player.pos;
 
-        // add enemies container
+        // enemies container
         this.enemyManager = new EnemyManager(this);
         this.enemyManager.addContainersToStage(this.stage);
 
@@ -82,15 +82,20 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         }, true);
 
         this.renderer.renderer.view.addEventListener("click", function(data) {
-            console.log("click on stage");
-            self.sound.play("beam");
-            var mouseWorld = self.camera.canvasToWorld(data);
-            self.fireEvents.push(mouseWorld);
+            if (self.focus && self.player.state == Conf.player.states.PLAYING) {
+                self.sound.play("beam");
+                var mouseWorld = self.camera.canvasToWorld(data);
+                self.fireEvents.push(mouseWorld);
+            }
         }, true);
 
         // keyboard inputs
         this.input = new Input();
     };
+
+    Game.prototype.start = function() {
+        this.player.state = Conf.player.states.PLAYING;
+     };
 
     Game.prototype.tick = function() {
         if (!this.focus) return;

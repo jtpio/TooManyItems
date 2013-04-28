@@ -1,4 +1,4 @@
-define(['Renderer', 'Physics', 'Sound', 'Home', 'Game'], function(Renderer, Physics, Sound, Home, Game) {
+define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Renderer, Physics, Sound, Home, Intro, Game) {
 
     var Main = function() {
         this.sound = new Sound();
@@ -84,6 +84,7 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Game'], function(Renderer, Phys
 
             // loading different screens
             self.home = new Home(self, rendererManager, self.sound, physics);
+            self.intro = new Intro(self, rendererManager, self.sound, physics);
             self.game = new Game(self, rendererManager, self.sound, physics);
 
             // list of screens
