@@ -70,7 +70,7 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Game'], function(Renderer, Phys
             ];
 
             // start with home
-            self.game.show();
+            self.home.show();
 
         };
 

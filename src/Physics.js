@@ -1,7 +1,11 @@
 define(function() {
 
     var Physics = function() {
-
+        this.NONE = -1;
+        this.LEFT = 1;
+        this.DOWN = 2;
+        this.RIGHT = 3;
+        this.TOP = 4;
     };
 
     Physics.prototype.pointAABB = function(point, entity) {
@@ -17,12 +21,21 @@ define(function() {
     Physics.prototype.collisionAABB = function(entity1, entity2) {
         var box1 = this.entityToBox(entity1);
         var box2 = this.entityToBox(entity2);
-        return (
+        var colliding = (
             box2.x < box1.x + box1.w &&
             box2.x + box2.w > box1.x &&
             box2.y < box1.y + box1.h &&
             box2.y + box2.h > box1.y
         );
+        var res = 0;
+        if (colliding) {
+            if (box2.x < box1.x + box1.w) res = Utils.setBit(res, this.LEFT);
+            if (box2.x + box2.w > box1.x) res = Utils.setBit(res, this.RIGHT);
+            if (box2.y < box1.y + box1.h) res = Utils.setBit(res, this.TOP);
+            if (box2.y + box2.h > box1.y) res = Utils.setBit(res, this.DOWN);
+            return res;
+        }
+        return colliding;
     };
 
     Physics.prototype.entityToBox = function(entity) {

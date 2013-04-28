@@ -4,7 +4,11 @@ define(['Entity'], function(Entity) {
         this.width = 0;
         this.height = 0;
         this.grid = [];
+
+        this.items = ['tv', 'tv', 'tv', 'tv', 'tv'];
+        this.nbSourceSpots = 5;
         this.generate();
+        this.createSourceSpots();
     };
 
     Map.prototype.generate = function() {
@@ -19,6 +23,13 @@ define(['Entity'], function(Entity) {
             ymax: this.height * this.tileSize - Conf.camera.height
         };
 
+        this.limits = {
+            xmin: 0,
+            xmax: this.width * this.tileSize,
+            ymin: 0,
+            ymax: this.height * this.tileSize
+        };
+
         var i, j = 0;
         var data, cellSprite = null;
         for (i = 0; i < this.width; i++) {
@@ -27,20 +38,28 @@ define(['Entity'], function(Entity) {
                 this.grid[i].push(-1);
             }
         }
+    };
 
-        // add walls
-        for (i = 0; i < this.width; i++) {
-            this.grid[i][1]  = new Entity(PIXI.Sprite.fromFrame("block.png"));
-            this.grid[i][this.height-2]  = new Entity(PIXI.Sprite.fromFrame("block.png"));
+    Map.prototype.createSourceSpots = function() {
+        this.sourceSpots = [];
+        for (var i = 0; i < this.nbSourceSpots; i++) {
+            var xSource = Utils.random(0, this.width-1);
+            var ySource = Utils.random(0, this.height-1);
+            var source = new Entity(PIXI.Sprite.fromFrame(this.items[i]+'.png'));
+            source.pos.x = xSource * this.tileSize;
+            source.pos.y = ySource * this.tileSize;
+            source.anchor.x = source.anchor.y = 0.5;
+            this.sourceSpots.push(source);
         }
-        for (j = 0; j < this.height; j++) {
-            this.grid[1][j]  = new Entity(PIXI.Sprite.fromFrame("block.png"));
-            this.grid[this.width-2][j]  = new Entity(PIXI.Sprite.fromFrame("block.png"));
-        }
+    };
 
+    Map.prototype.randomSourceSpot = function() {
+        var r = Utils.random(0, this.sourceSpots.length - 1);
+        return this.sourceSpots[r];
     };
 
     Map.prototype.update = function(camera) {
+        // tiles
         for (var i = 0; i < this.width; i++) {
             for (var j = 0; j < this.height; j++) {
                 var cell = this.grid[i][j];
@@ -51,6 +70,35 @@ define(['Entity'], function(Entity) {
                 }
             }
         }
+        // source spots
+        for (var s = 0; s < this.sourceSpots.length; s++) {
+            var source = this.sourceSpots[s];
+            var newPos = camera.transform(source.pos);
+            source.position.x = newPos.x;
+            source.position.y = newPos.y;
+        }
+    };
+
+    Map.prototype.getGridPosision = function(worldPosition) {
+        var gridPos = {};
+        gridPos.x = Math.floor(worldPosition.pos.x / this.tileSize);
+        gridPos.y = Math.floor(worldPosition.pos.y / this.tileSize);
+        gridPos.w = gridPos.h = this.tileSize;
+        return gridPos;
+    };
+
+    Map.prototype.getAllNeighbors = function(worldPosition) {
+        var gridPos = this.getGridPosision(worldPosition);
+        var neighbors = [];
+        for (var i = gridPos.x-1; i <= gridPos.x+1; i++) {
+            for (var j = gridPos.y-1; j <= gridPos.y+1; j++) {
+                if (i >= 0 && i < this.width && j >= 0 && j < this.height && i != gridPos.x && j != gridPos.y) {
+                    var next = this.grid[i][j];
+                    neighbors.push(next);
+                }
+            }
+        }
+        return neighbors;
     };
 
     return Map;

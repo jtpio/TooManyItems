@@ -29,7 +29,13 @@ Conf.player = {
 };
 
 Conf.enemy = {
-    speed: 200
+    speed: 200,
+    states: {
+        STOPPED: 1,
+        FETCHING: 2,
+        BRINGING: 3,
+        CRAZY: 4
+    }
 };
 
 Conf.map = {

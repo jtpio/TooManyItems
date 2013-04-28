@@ -34,14 +34,14 @@ define(function() {
     };
 
     Entity.prototype.lookAt = function(target) {
-        var deltaX = target.x - this.pos.x;
-        var deltaY = target.y - this.pos.y;
+        var deltaX = target.pos.x - this.pos.x;
+        var deltaY = target.pos.y - this.pos.y;
         this.rotation(Math.atan2(deltaY, deltaX) - Math.PI/2);
     };
 
     Entity.prototype.move = function(target, dt) {
-        var deltaX = target.x - this.pos.x;
-        var deltaY = target.y - this.pos.y;
+        var deltaX = target.pos.x - this.pos.x;
+        var deltaY = target.pos.y - this.pos.y;
         var normalized = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
         this.pos.x += (deltaX/normalized) * Conf.enemy.speed * dt;
         this.pos.y += (deltaY/normalized) * Conf.enemy.speed * dt;

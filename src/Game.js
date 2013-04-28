@@ -1,4 +1,5 @@
-define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], function(Screen, Input, Map, Camera, Entity, Player, Enemy) {
+define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyManager'],
+        function(Screen, Input, Map, Camera, Entity, Player, Enemy, EnemyManager) {
 
     var Game = function(main, renderer, sound, physics) {
         Screen.call(this, main, renderer, sound, physics);
@@ -53,9 +54,8 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
         this.aim.pos = this.player.pos;
 
         // add enemies container
-        this.enemies = [];
-        this.enemiesSprites = new PIXI.DisplayObjectContainer();
-        this.stage.addChild(this.enemiesSprites);
+        this.enemyManager = new EnemyManager(this);
+        this.stage.addChild(this.enemyManager.enemiesSprites);
 
         // items text
         this.itemsText = new PIXI.Text("Items: " + this.items, "bold 60px Arial", "#000000", "#a4410e", 3);
@@ -111,15 +111,16 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
 
         this.camera.targetEntity(this.player);
 
-        var mouseWorld = this.camera.canvasToWorld(this.mouse);
+        var mouseWorld = {
+            pos: this.camera.canvasToWorld(this.mouse)
+        };
         this.player.lookAt(mouseWorld);
         this.aim.rotation(this.player.getRotation() + Math.PI/2);
-
-        if (Math.random() < 0.01) this.spawEnemy();
 
         // consume fire event
         var fireEvent = this.fireEvents.shift();
 
+        // draw laser beam on fire event
         if (fireEvent) {
             var beamSprite = PIXI.Sprite.fromFrame("beam.png");
             beamSprite.anchor.x = beamSprite.anchor.y = 0.5;
@@ -144,38 +145,17 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
             });
             tween.easing(TWEEN.Easing.Bounce.InOut);
             tween.start();
-            console.log("created a new tween");
         }
 
-        // update enemies
-        this.toDie = []; // list of dead enemies
-        for (var i = 0; i < this.enemies.length; i++) {
-            var enemy = this.enemies[i];
-            // look first
-            enemy.lookAt(this.player.pos);
-            // then move
-            enemy.move(this.player.pos, dt);
-            // enemy hits the player ?
-            if (this.collide(this.player, enemy)) {
-                this.sound.play("hurt");
-                this.items++;
-                console.log("Haha you got an item!");
-                this.toDie.push(i);
-            }
-            // enemy killed
-            else if (fireEvent && this.physics.lineCircle(this.player.pos, fireEvent, enemy)) {
-                console.log("enemy KILLED!!");
-                this.toDie.push(i);
-            }
-
-            // enemy out of the screen? => IMPOSSIBLE if map built correctly
-        }
+        this.enemyManager.update(dt, fireEvent);
 
         // inputs
         this.performActions(dt);
 
-        //
-        this.killEnemies();
+        // physics
+        //this.collisions(dt);
+
+        // updates
         this.updateCamera();
 
         // texts
@@ -186,37 +166,61 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
         TWEEN.update();
     };
 
-    Game.prototype.killEnemies = function() {
-        for (var i = this.toDie.length-1; i >= 0; --i) {
-            this.enemiesSprites.removeChild(this.enemies[i].sprite);
-            this.enemies.splice(i, 1);
-        }
-    };
-
     // convert from world coordinates to camera coordinates
     Game.prototype.updateCamera = function() {
         // tiling sprite (background)
         this.tilingSprite.tilePosition.x = this.camera.x;
         this.tilingSprite.tilePosition.y = -this.camera.y;
         // player
-        this.updateEntity(this.player);
+        this.updateEntityCamera(this.player);
         // aim
-        this.updateEntity(this.aim);
+        this.updateEntityCamera(this.aim);
         // enemies
-        for (var i = 0; i < this.enemies.length; i++) {
-            this.updateEntity(this.enemies[i]);
-        }
+        this.enemyManager.updateCamera();
+        // map
         this.map.update(this.camera);
     };
 
-    Game.prototype.updateEntity = function(entity) {
+    Game.prototype.updateEntityCamera = function(entity) {
         if (!this.camera.isVisible(entity)) entity.sprite.visible = false;
         entity.sprite.visible = true;
         var posScreen = this.camera.transform(entity.pos);
         entity.position.x = posScreen.x;
         entity.position.y = posScreen.y;
-
+        this.boundsCheck(entity);
     };
+
+    Game.prototype.boundsCheck = function(entity) {
+        if (entity.pos.x - entity.width/2 < this.map.limits.xmin) entity.pos.x = this.map.limits.xmin + entity.width/2;
+        if (entity.pos.x + entity.width/2 > this.map.limits.xmax) entity.pos.x = this.map.limits.xmax - entity.width/2;
+        if (entity.pos.y - entity.height/2 < this.map.limits.ymin) entity.pos.y = this.map.limits.ymin + entity.height/2;
+        if (entity.pos.y + entity.height/2 > this.map.limits.ymax) entity.pos.y = this.map.limits.ymax - entity.height/2;
+    };
+
+    /*
+    Game.prototype.collisions = function(dt) {
+        // player
+        var neighbors = this.map.getAllNeighbors(this.player);
+        for (var i = 0; i < neighbors.length; i++) {
+            if (neighbors[i] !== -1) {
+                var c = this.collide(this.player, neighbors[i]);
+                if (Utils.getBit(c, this.physics.LEFT)) {
+                    this.player.pos.x = neighbors[i].pos.x + neighbors[i].width + 15;
+                }
+                if (Utils.getBit(c, this.physics.TOP)) {
+                    //this.player.pos.y = neighbors[i].pos.y - neighbors[i].height + 15;
+                }
+                if (Utils.getBit(c, this.physics.DOWN)) {
+                    this.player.pos.y = neighbors[i].pos.y + neighbors[i].height -15;
+                }
+                if (Utils.getBit(c, this.physics.RIGHT)) {
+                    //this.player.pos.x = neighbors[i].pos.x - neighbors[i].height - 15;
+                }
+
+            }
+        }
+    };
+    */
 
     Game.prototype.collide = function(a, b) {
         return this.physics.collisionAABB(a,b);
@@ -250,17 +254,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
             break;
         }
 
-    };
-
-    Game.prototype.spawEnemy = function() {
-        // new enemy
-        var enemySprite = PIXI.Sprite.fromFrame("enemy.png");
-        var enemy = new Enemy(enemySprite);
-        enemy.anchor.x = enemy.anchor.y = 0.5;
-        enemy.pos.x = Conf.canvas.width;
-        enemy.pos.y = Utils.random(0, Conf.canvas.height);
-        this.enemies.push(enemy);
-        this.enemiesSprites.addChild(enemy.sprite);
     };
 
     return Game;

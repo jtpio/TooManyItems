@@ -1,7 +1,13 @@
 var Utils = Utils || {};
 
 Utils.random =  function(min, max) {
-    return (Math.random() * (max - min) + min);
+    return Math.floor((Math.random() * (max - min) + min));
+};
+
+Utils.euclidian = function(a, b) {
+    var dx = b.x - a.x;
+    var dy = b.y - a.y;
+    return Math.sqrt(dx*dx + dy*dy);
 };
 
 Utils.transpose = function(matrix) {
@@ -27,4 +33,12 @@ Utils.secondsToString = function(seconds) {
     res = min + '\'' + res;
     if (min < 10) res = "0" + res;
     return res;
+};
+
+Utils.setBit = function(n, i) {
+    return (n | (1 << i));
+};
+
+Utils.getBit = function(n, i) {
+    return ((n & (1 << i)) !== 0);
 };
