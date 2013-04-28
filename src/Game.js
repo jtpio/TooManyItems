@@ -34,6 +34,14 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
         this.camera = new Camera();
         this.camera.init(this.map.bounds);
 
+        // aiming line
+        var aimSprite = PIXI.Sprite.fromFrame("aim.png");
+        this.aim = new Entity(aimSprite);
+        this.aim.anchor.x = this.aim.anchor.y = 0.5;
+        this.aim.scale.x = 100;
+        this.aim.scale.y = 5;
+        this.stage.addChild(this.aim.sprite);
+
         // player
         var playerSprite = PIXI.Sprite.fromFrame("player.png");
         this.player = new Player(playerSprite);
@@ -42,13 +50,19 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
         this.player.pos.y = Conf.canvas.height/2;
         this.stage.addChild(this.player.sprite);
 
+        this.aim.pos = this.player.pos;
+
+        // beam
+        /*
         var beamSprite = PIXI.Sprite.fromFrame("beam.png");
         this.beam = new Entity(beamSprite);
         this.beam.anchor.x = this.beam.anchor.y = 0.5;
         this.beam.pos = this.player.pos;
         this.beam.scale.y = 30;
         this.beam.scale.x = 2;
+        this.beam.alpha = 0.5;
         this.stage.addChild(this.beam.sprite);
+        */
 
         // add enemies container
         this.enemies = [];
@@ -100,36 +114,56 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
     };
 
     Game.prototype.update = function(dt) {
+        var self = this;
         // update timer game
         this.timer += dt;
 
         this.camera.targetEntity(this.player);
 
         var mouseWorld = this.camera.canvasToWorld(this.mouse);
-        var deltaX = mouseWorld.x - this.player.pos.x;
-        var deltaY = mouseWorld.y - this.player.pos.y;
-        this.player.rotation(Math.atan2(deltaY, deltaX) - Math.PI/2);
-
-        this.beam.rotation(this.player.getRotation());
+        this.player.lookAt(mouseWorld);
+        this.aim.rotation(this.player.getRotation() + Math.PI/2);
 
         if (Math.random() < 0.01) this.spawEnemy();
 
         // consume fire event
         var fireEvent = this.fireEvents.shift();
 
+        if (fireEvent) {
+            var beamSprite = PIXI.Sprite.fromFrame("beam.png");
+            beamSprite.anchor.x = beamSprite.anchor.y = 0.5;
+            beamSprite.x = this.player.pos.x;
+            beamSprite.y = this.player.pos.y;
+            beamSprite.scale.x = 200;
+            beamSprite.scale.y = 0.25;
+            beamSprite.rotation = this.player.getRotation() + Math.PI/2;
+            this.stage.addChild(beamSprite);
+            this.stage.swapChildren(beamSprite, this.player.sprite);
+
+            var alphaStart = {val:0}; var alphaEnd = {val:1000};
+            var tween = new TWEEN.Tween(alphaStart).to(alphaEnd, 1000);
+            tween.onUpdate(function(){
+                beamSprite.alpha = 1-alphaStart.val/1000;
+                var newPos = self.camera.transform(beamSprite);
+                beamSprite.position.x = newPos.x;
+                beamSprite.position.y = newPos.y;
+            });
+            tween.onComplete(function() {
+                self.stage.removeChild(beamSprite);
+            });
+            tween.easing(TWEEN.Easing.Bounce.InOut);
+            tween.start();
+            console.log("created a new tween");
+        }
+
         // update enemies
         this.toDie = []; // list of dead enemies
         for (var i = 0; i < this.enemies.length; i++) {
             var enemy = this.enemies[i];
-            deltaX = this.player.pos.x - enemy.pos.x;
-            deltaY = this.player.pos.y - enemy.pos.y;
-            enemy.rotation(Math.atan2(deltaY, deltaX) - Math.PI/2);
-
-            // move
-            var normalized = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
-            enemy.pos.x += (deltaX/normalized) * Conf.enemy.speed * dt;
-            enemy.pos.y += (deltaY/normalized) * Conf.enemy.speed * dt;
-
+            // look first
+            enemy.lookAt(this.player.pos);
+            // then move
+            enemy.move(this.player.pos, dt);
             // enemy hits the player ?
             if (this.collide(this.player, enemy)) {
                 this.items++;
@@ -140,31 +174,24 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
             else if (fireEvent && this.physics.lineCircle(this.player.pos, fireEvent, enemy)) {
                 console.log("enemy KILLED!!");
                 this.toDie.push(i);
-                fireEvent = -1; // consume event
             }
-            /*
-            else if (fireEvent &&
-                fireEvent.x > enemy.pos.x - enemy.width/2 &&
-                fireEvent.x < enemy.pos.x + enemy.width/2 &&
-                fireEvent.y > enemy.pos.y - enemy.height/2 &&
-                fireEvent.y < enemy.pos.y + enemy.height/2) {
-                console.log("enemy KILLED!!");
-                this.toDie.push(i);
-                fireEvent = -1; // consume event
-            }
-            */
 
             // enemy out of the screen? => IMPOSSIBLE if map built correctly
         }
 
+        // inputs
         this.performActions(dt);
 
+        //
         this.killEnemies();
         this.updateCamera();
 
         // texts
         this.itemsText.setText("Items: " + this.items);
         this.timerText.setText(Utils.secondsToString(this.timer));
+
+        // TWEEN
+        TWEEN.update();
     };
 
     Game.prototype.killEnemies = function() {
@@ -181,8 +208,8 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
         this.tilingSprite.tilePosition.y = -this.camera.y;
         // player
         this.updateEntity(this.player);
-        // beam
-        this.updateEntity(this.beam);
+        // aim
+        this.updateEntity(this.aim);
         // enemies
         for (var i = 0; i < this.enemies.length; i++) {
             this.updateEntity(this.enemies[i]);
@@ -191,9 +218,12 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy'], functi
     };
 
     Game.prototype.updateEntity = function(entity) {
+        if (!this.camera.isVisible(entity)) entity.sprite.visible = false;
+        entity.sprite.visible = true;
         var posScreen = this.camera.transform(entity.pos);
         entity.position.x = posScreen.x;
         entity.position.y = posScreen.y;
+
     };
 
     Game.prototype.collide = function(a, b) {

@@ -25,11 +25,11 @@ Conf.actions = {
 };
 
 Conf.player = {
-    speed: 150
+    speed: 180
 };
 
 Conf.enemy = {
-    speed: 180
+    speed: 200
 };
 
 Conf.map = {

@@ -9,28 +9,25 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="8.5425472"
-   height="47.359306"
+   width="20"
+   height="8"
    id="svg3140"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="beam.svg"
-   inkscape:export-filename="/home/jeremy/IF/Games/game_jams/ludum_dare/26/assets/sprites/beam.png"
+   sodipodi:docname="aim.svg"
+   inkscape:export-filename="/home/jeremy/IF/Games/game_jams/ludum_dare/26/assets/sprites/aim.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
      id="defs3142">
     <filter
        inkscape:collect="always"
-       id="filter3925"
-       x="-0.31711752"
-       width="1.634235"
-       y="-0.029896459"
-       height="1.0597929">
+       id="filter3767"
+       color-interpolation-filters="sRGB">
       <feGaussianBlur
          inkscape:collect="always"
-         stdDeviation="0.53386534"
-         id="feGaussianBlur3927" />
+         stdDeviation="0.29182879"
+         id="feGaussianBlur3769" />
     </filter>
   </defs>
   <sodipodi:namedview
@@ -40,9 +37,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="11.2"
-     inkscape:cx="-10.306847"
-     inkscape:cy="24.207655"
+     inkscape:zoom="22.4"
+     inkscape:cx="-2.4012812"
+     inkscape:cy="0.80264294"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -63,7 +60,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -71,14 +68,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-137.74892,-367.25395)">
+     transform="translate(-133.09722,-405.22479)">
     <rect
-       style="color:#000000;fill:#00aad4;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6.00013736000000009;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter3925)"
-       id="rect3148"
-       width="4.0403848"
-       height="42.857143"
-       x="140"
-       y="369.50504"
-       transform="matrix(3.5447322,0,0,1.0180087,-361.40336,-7.04021)" />
+       style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3767);enable-background:accumulate"
+       id="rect3006"
+       width="10"
+       height="10"
+       x="137.83821"
+       y="404.70255"
+       transform="matrix(2.4904315,0,0,0.70170649,-212.63156,121.73386)" />
   </g>
 </svg>

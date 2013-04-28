@@ -88,8 +88,8 @@ define(function() {
         return this.isVisible(x,y,size,size);
     };
 
-    Camera.prototype.isEntityVisible = function(entity) {
-        return this.isVisibleXY(entity.position.x, entity.position.y, entity.width, entity.height);
+    Camera.prototype.isVisible = function(entity) {
+        return this.isVisibleXY(entity.pos.x, entity.pos.y, entity.width, entity.height);
     };
 
     Camera.prototype.isVisible = function(x,y,width,height) {
