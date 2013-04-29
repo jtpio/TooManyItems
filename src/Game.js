@@ -170,11 +170,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.start();
      };
 
-     Game.prototype.enter = function() {
-        this.player.state = Conf.player.states.WAIT;
-
-     };
-
     Game.prototype.tick = function() {
         if (!this.focus) return;
         this.renderer.stats.begin();

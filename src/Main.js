@@ -74,9 +74,11 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
             var rendererManager = new Renderer(renderer);
             // stats
             var stats = new Stats();
+            /*
             document.body.appendChild(stats.domElement );
             stats.domElement.style.position = "absolute";
             stats.domElement.style.top = "0px";
+            */
             rendererManager.stats = stats;
 
             // create physics engine

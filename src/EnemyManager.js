@@ -83,7 +83,7 @@ define(['Enemy'], function(Enemy){
     EnemyManager.prototype.increaseDifficulty = function(dt) {
         this.proba = (this.game.timer/90) * (this.game.timer/90) / 100;
         Conf.enemy.speed += dt/2;
-        Conf.enemy.speed = Math.max(Conf.enemy.speed, Conf.enemy.maxSpeed);
+        Conf.enemy.speed = Math.min(Conf.enemy.speed, Conf.enemy.maxSpeed);
     };
 
     EnemyManager.prototype.spawEnemy = function() {

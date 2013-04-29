@@ -18,7 +18,7 @@ Conf.objects = [
 Conf.intro = {
     sentences: [
         //{text:'Welcome young hero ...', who:'old', t:2000},
-        'Welcome young hero ...',
+        'Welcome young Hero ...',
         'Your quest is about to begin',
         'Go to the castle and save - wait for it -',
         'The princess!',
@@ -37,9 +37,10 @@ Conf.intro = {
         'I\'m fed up of all these old guys',
         'trying to give these useless items',
         'I prefer to keep the minimum with me',
-        'Nooo you don\'t understand, they are very essential!',
+        'Nooo you don\'t understand, they are essential!',
         'Come here and take them',
         'No way, go away!'
+
     ],
     who: [
         'old',

@@ -78,6 +78,14 @@ define(['Screen', 'Input'], function(Screen, Input) {
         this.mark.position.y = Conf.canvas.height/2;
         this.addToStage(this.mark);
 
+        // instru
+        this.instru = PIXI.Sprite.fromFrame("instru.png");
+        this.instru.anchor.x = this.instru.anchor.y = 0.5;
+        this.instru.position.x = Conf.canvas.width/2;
+        this.instru.position.y = Conf.canvas.height/2;
+        this.instru.visible = false;
+        this.addToStage(this.instru);
+
     };
 
     Intro.prototype.loadTweens = function() {
@@ -134,7 +142,7 @@ define(['Screen', 'Input'], function(Screen, Input) {
                     self.tweenFadeIn.start();
                     break;
                 case self.texts.length: // finished
-                    self.play(self);
+                    self.instructions(self);
                     break;
                 default:
                     self.text.setText(self.texts[self.posText]);
@@ -149,6 +157,17 @@ define(['Screen', 'Input'], function(Screen, Input) {
     Intro.prototype.start = function() {
         this.input = new Input();
         this.tweenFadeIn.start();
+    };
+
+    Intro.prototype.instructions = function() {
+        this.text.visible = false;
+        this.playerNoWeapon.visible = false;
+        this.player.visible = false;
+        this.enemy.visible = false;
+        this.tv.visible = false;
+        this.potato.visible = false;
+        this.mark.visible = false;
+        this.instru.visible = true;
     };
 
     Intro.prototype.play = function(self) {

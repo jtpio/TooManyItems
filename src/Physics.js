@@ -47,25 +47,6 @@ define(function() {
         return box;
     };
 
-    Physics.prototype.lineSegment = function(a, b, o, p) {
-        var ao = {};
-        var ap = {};
-        var ab = {};
-        ab.x = b.x - a.x;
-        ab.y = b.y - a.y;
-        ap.x = p.x - a.x;
-        ap.y = p.y - a.y;
-        ao.x = o.x - a.x;
-        ao.y = o.y - a.y;
-        return ((ab.x*ap.y - ab.y*ap.x)*(ab.x*ao.y - ab.y*ao.x)<0);
-    };
-
-    Physics.prototype.segmentSegment = function(a, b, o, p) {
-        if (!this.lineSegment(a,b,o,p)) return false;
-        if (!this.lineSegment(o,p,a,b)) return false;
-        return true;
-    };
-
     Physics.prototype.lineCircle = function(start, end, c) {
         var s = {
             x: start.x - c.pos.x,
