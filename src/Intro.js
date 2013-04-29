@@ -155,6 +155,7 @@ define(['Screen', 'Input'], function(Screen, Input) {
     };
 
     Intro.prototype.start = function() {
+        this.sound.play("music_intro");
         this.input = new Input();
         this.tweenFadeIn.start();
     };
@@ -171,6 +172,7 @@ define(['Screen', 'Input'], function(Screen, Input) {
     };
 
     Intro.prototype.play = function(self) {
+        this.sound.stop('music_intro');
         self.main.intro.hide();
         self.main.game.show();
         self.main.game.start();

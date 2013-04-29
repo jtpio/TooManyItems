@@ -29,5 +29,9 @@ define(function() {
         return this.sounds[soundName].playing;
     };
 
+    Sound.prototype.setLoop = function(soundName, loop) {
+        this.sounds[soundName].loop = loop;
+    };
+
     return Sound;
 });

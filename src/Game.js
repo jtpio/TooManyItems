@@ -55,9 +55,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             }, this);
             this.restartText.scale.x = this.restartText.scale.y = 0.8;
             this.ui.addChild(this.restartText);
-            // ammo text
-            this.ammoText = new PIXI.Text('Ammo', "bold 20px Peralta", "#000000", "#d5f6ff", 1);
-            this.addToStage(this.ammoText);
         }
 
         // tile texture
@@ -102,11 +99,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.ammoSprite.position.y = Conf.canvas.height - 50;
         this.ammoSprite.scale.x = this.player.shots;
 
-        this.ammoText.position.x = 50;
-        this.ammoText.position.y = Conf.canvas.height - 50;
-        this.ammoText.anchor.x = 0;
-        this.ammoText.anchor.y = 0.5;
-
         // lose text
         this.endText.setText('You survived ');
         this.endText.position.x = Conf.canvas.width/2;
@@ -124,7 +116,12 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         if (!firstLoad) return;
         var self = this;
         this.renderer.renderer.view.addEventListener("mousemove", function(data) {
-            self.mouse = data;
+            //console.log(data);
+            var realData = {
+                x: data.x - data.target.offsetLeft,
+                y: data.y - data.target.offsetTop
+            };
+            self.mouse = realData;
         }, true);
 
 
@@ -158,6 +155,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.endText.setInteractive(false);
         this.restartText.setInteractive(false);
         this.player.state = Conf.player.states.PLAYING;
+        this.sound.play('music_main');
      };
 
      Game.prototype.dispose = function() {
@@ -187,9 +185,11 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
         switch (this.player.state) {
             case Conf.player.states.LOST:
+                this.sound.stop('music_main');
                 this.endText.setText("You survived " + Utils.secondsToString(this.timer));
                 return;
             case Conf.player.states.WAIT:
+                this.sound.stop('music_main');
                 return;
         }
         // update timer game

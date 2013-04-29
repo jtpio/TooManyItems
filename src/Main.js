@@ -7,11 +7,10 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
         // google fonts first
         WebFontConfig = {
             google: {
-                families: [ 'Peralta', 'Arvo:700italic', 'Podkova:700' ]
+                families: ['Peralta']
             },
 
             active: function() {
-            // do something
                 self.loadSounds();
             }
 
@@ -36,7 +35,9 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
             'buttonReleased.mp3',
             'footsteps_1.mp3',
             'footsteps_2.mp3',
-            'hurt.mp3'
+            'hurt.mp3',
+            'music_intro.mp3',
+            'music_main.mp3'
         ];
 
         var n = this.soundsNames.length;
@@ -51,7 +52,8 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
                     if (loaded == n) {
                         self.loadSprites();
                     }
-                }
+                },
+                loop: (i.indexOf("music") !== -1)
             });
             var name = i.substr(0, i.lastIndexOf('.'));
             self.sound.add(name, s);
@@ -74,11 +76,9 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
             var rendererManager = new Renderer(renderer);
             // stats
             var stats = new Stats();
-            /*
             document.body.appendChild(stats.domElement );
             stats.domElement.style.position = "absolute";
             stats.domElement.style.top = "0px";
-            */
             rendererManager.stats = stats;
 
             // create physics engine
@@ -98,6 +98,7 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
             // start with home
             self.home.show();
 
+            $("#loading").html("");
         };
 
         loader.load();

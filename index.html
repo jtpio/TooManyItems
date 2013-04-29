@@ -1,11 +1,33 @@
 <html>
 <head>
-    <title>Ludum Dare 26</title>
-    <meta content="">
+    <title>Too Many Items - Ludum Dare 26 - By Jérémy Tuloup</title>
+    <meta charset="utf-8">
     <link rel="stylesheet" href="css/main.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
     <script type="text/javascript" src="src/lib/howler.js"></script>
+
 </head>
 <body>
-    <script data-main="src/Init" src="src/lib/require.js"></script>
+    <noscript>
+    <div class="alert">
+        Javascript is required to play the game!
+    </div>
+    </noscript>
+    <p id="loading">Loading ..  </p>
+
+    <div class="page-header">
+    <h1>Too Many Things </h1>
+    <h1><small>Ludum Dare 26 compo - April 2013</small></h1>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div id="content">
+                    <script data-main="src/Init" src="src/lib/require.js"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
