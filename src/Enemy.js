@@ -55,7 +55,6 @@ define(['Entity'], function(Entity) {
         this.item = new Entity(PIXI.Sprite.fromFrame(this.target.item+".png"));
         this.item.pos = this.pos;
         this.item.rescale(0.5);
-        //this.item.anchor.x = this.item.anchor.y = 0.5;
     };
 
     Enemy.prototype.destinationReached = function() {

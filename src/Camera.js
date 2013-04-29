@@ -81,13 +81,6 @@ define(function() {
         );
     };
 
-        /*
-         * Tell if a tile or an entity is visible or not
-         */
-    Camera.prototype.isTileVisible = function(x,y,size) {
-        return this.isVisible(x,y,size,size);
-    };
-
     Camera.prototype.isVisible = function(entity) {
         return this.isVisibleXY(entity.pos.x, entity.pos.y, entity.width, entity.height);
     };

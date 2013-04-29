@@ -17,7 +17,6 @@ Conf.objects = [
 
 Conf.intro = {
     sentences: [
-        //{text:'Welcome young hero ...', who:'old', t:2000},
         'Welcome young Hero.',
         'Your quest is about to start.',
         'Go to the castle to save ...',
@@ -69,7 +68,7 @@ Conf.camera = {
     height: 550
 };
 
-// to go fullscreen
+// to go fullscreen?
 Conf.ratios = {
     x: window.innerWidth / Conf.canvas.width,
     y: window.innerHeight / Conf.canvas.height

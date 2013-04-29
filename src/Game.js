@@ -116,7 +116,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         if (!firstLoad) return;
         var self = this;
         this.renderer.renderer.view.addEventListener("mousemove", function(data) {
-            //console.log(data);
             var realData = {
                 x: data.x - data.target.offsetLeft,
                 y: data.y - data.target.offsetTop
@@ -132,7 +131,6 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             }
         };
 
-        //this.renderer.renderer.view.addEventListener("click", self.clickListener, true);
         this.stage.click = self.clickListener;
 
         // keyboard inputs
