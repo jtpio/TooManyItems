@@ -30,14 +30,14 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
     Main.prototype.loadSounds = function() {
         this.soundsPath = 'assets/sounds/';
         this.soundsNames = [
-            'beam.mp3',
-            'buttonPressed.mp3',
-            'buttonReleased.mp3',
-            'footsteps_1.mp3',
-            'footsteps_2.mp3',
-            'hurt.mp3',
-            'music_intro.mp3',
-            'music_main.mp3'
+            'beam.ogg',
+            'buttonPressed.ogg',
+            'buttonReleased.ogg',
+            'footsteps_1.ogg',
+            'footsteps_2.ogg',
+            'hurt.ogg',
+            'music_intro.ogg',
+            'music_main.ogg'
         ];
 
         var n = this.soundsNames.length;
