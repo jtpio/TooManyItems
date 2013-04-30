@@ -37,7 +37,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             this.ui.addChild(this.timerText);
             // ammo
             this.ammoSprite = PIXI.Sprite.fromFrame("ammo.png");
-            this.addToStage(this.ammoSprite);
+            this.ui.addChild(this.ammoSprite);
             // lose text
             this.endText = new PIXI.Text('You survived ', "bold 60px Peralta", "#000000", "#d5f6ff", 6);
             this.ui.addChild(this.endText);
@@ -55,6 +55,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
             }, this);
             this.restartText.scale.x = this.restartText.scale.y = 0.8;
             this.ui.addChild(this.restartText);
+
         }
 
         // tile texture
@@ -115,14 +116,17 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
     Game.prototype.setupInputs = function(firstLoad) {
         if (!firstLoad) return;
         var self = this;
+
+        this.offsetCanvasX = $('canvas').offset().left;
+        this.offsetCanvasY = $('canvas').offset().top;
+
         this.renderer.renderer.view.addEventListener("mousemove", function(data) {
             var realData = {
-                x: data.x - data.target.offsetLeft,
-                y: data.y - data.target.offsetTop
+                x: Math.max(1, data.pageX - self.offsetCanvasX),
+                y: Math.max(1, data.pageY - self.offsetCanvasY)
             };
             self.mouse = realData;
         }, true);
-
 
         this.clickListener = function(data) {
             if (self.focus && self.player.state == Conf.player.states.PLAYING) {

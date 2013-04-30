@@ -16,11 +16,13 @@ define(function() {
     };
 
     Sound.prototype.play = function(soundName) {
+        if (!this.sounds.hasOwnProperty(soundName)) return;
         this.sounds[soundName].play();
         this.sounds[soundName].playing = true;
     };
 
     Sound.prototype.stop = function(soundName) {
+        if (!this.sounds.hasOwnProperty(soundName)) return;
         this.sounds[soundName].stop();
         this.sounds[soundName].playing = false;
     };

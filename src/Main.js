@@ -7,7 +7,7 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
         // google fonts first
         WebFontConfig = {
             google: {
-                families: ['Peralta']
+                families: ['Peralta', 'Ubuntu']
             },
 
             active: function() {
@@ -53,6 +53,7 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
                         self.loadSprites();
                     }
                 },
+                volume: 0,
                 loop: (i.indexOf("music") !== -1)
             });
             var name = i.substr(0, i.lastIndexOf('.'));

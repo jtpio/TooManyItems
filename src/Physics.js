@@ -48,13 +48,15 @@ define(function() {
     };
 
     Physics.prototype.lineCircle = function(start, end, c) {
+        var cx = c.pos.x;
+        var cy = c.pos.y;
         var s = {
-            x: start.x - c.pos.x,
-            y: start.y - c.pos.y
+            x: start.x - cx,
+            y: start.y - cy
         };
         var e = {
-            x: end.x - c.pos.x,
-            y: end.y - c.pos.y
+            x: end.x - cx,
+            y: end.y - cy
         };
         var dx = e.x - s.x;
         var dy = e.y - s.y;

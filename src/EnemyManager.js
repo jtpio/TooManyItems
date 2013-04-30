@@ -73,9 +73,9 @@ define(['Enemy'], function(Enemy){
 
     EnemyManager.prototype.killEnemies = function() {
         for (var i = this.toDie.length-1; i >= 0; --i) {
-            this.removeItem(this.enemies[i]);
-            this.enemiesSprites.removeChild(this.enemies[i].sprite);
-            this.enemies.splice(i, 1);
+            this.removeItem(this.enemies[this.toDie[i]]);
+            this.enemiesSprites.removeChild(this.enemies[this.toDie[i]].sprite);
+            this.enemies.splice(this.toDie[i], 1);
             this.nb--;
         }
     };
