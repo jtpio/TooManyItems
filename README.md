@@ -18,7 +18,7 @@ This game is powered by:
 All the art has been created using Inkscape. Music and sounds created with LMMS (using predefined samples) and Audacity.
 
 ## Links
-* Play [here](http://jtuloup.gtomee.com/showcase/ludum_dare_26/)
+* Play [here](http://jtuloup.github.io/TooManyItems/)
 * [Game page](http://www.ludumdare.com/compo/ludum-dare-26/?action=preview&uid=22254) on Ludum Dare
 
 ## Screenshot
