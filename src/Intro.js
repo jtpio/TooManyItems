@@ -76,6 +76,7 @@ define(['Screen', 'Input'], function(Screen, Input) {
         this.mark.anchor.x = this.mark.anchor.y = 0.5;
         this.mark.position.x = 300;
         this.mark.position.y = Conf.canvas.height/2;
+        this.mark.visible = false;
         this.addToStage(this.mark);
 
         // instru
@@ -91,34 +92,31 @@ define(['Screen', 'Input'], function(Screen, Input) {
     Intro.prototype.loadTweens = function() {
         var self = this;
         var position = {val:0};
-        var target = {val:1};
-        this.tweenFadeIn = new TWEEN.Tween(position).to(target, self.tweenTime);
+        this.tweenFadeIn = new TWEEN.Tween(position).to({val:1}, self.tweenTime);
         this.tweenFadeIn.onUpdate(function() {
             self.text.alpha = position.val;
         });
-        this.tweenFadeIn.onComplete(function() {
-            self.tweenWait.start();
-        });
         this.tweenFadeIn.easing(TWEEN.Easing.Cubic.In);
 
-        var position1 = {val:0};
-        var target1 = {val:1};
-        this.tweenWait = new TWEEN.Tween(position1).to(target1, self.tweenTime);
-        this.tweenWait.onUpdate(function() {
-            // nothing
+        this.tweenWait = new TWEEN.Tween(position).to({val:1}, self.tweenTime);
+        this.tweenWait.easing(TWEEN.Easing.Cubic.In);
+
+        this.tweenFadeOut = new TWEEN.Tween(position).to({val:0}, self.tweenTime);
+        this.tweenFadeOut.onUpdate(function() {
+            self.text.alpha = position.val;
+        });
+        this.tweenFadeOut.easing(TWEEN.Easing.Cubic.Out);
+
+        // transitions
+        this.tweenFadeIn.onComplete(function() {
+            self.tweenWait.start();
         });
         this.tweenWait.onComplete(function() {
             self.tweenFadeOut.start();
         });
-        this.tweenWait.easing(TWEEN.Easing.Cubic.In);
 
-        var position2 = {val:0};
-        var target2 = {val:1};
-        this.tweenFadeOut = new TWEEN.Tween(position2).to(target2, self.tweenTime);
-        this.tweenFadeOut.onUpdate(function() {
-            self.text.alpha = 1-position2.val;
-        });
         this.tweenFadeOut.onComplete(function() {
+            self.mark.visible = true;
             if (self.whos[self.posText] == 'hero') {
                 self.mark.position.x = self.player.position.x;
             } else {
@@ -151,7 +149,6 @@ define(['Screen', 'Input'], function(Screen, Input) {
             }
             self.posText++;
         });
-        this.tweenFadeOut.easing(TWEEN.Easing.Cubic.Out);
     };
 
     Intro.prototype.start = function() {
