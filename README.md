@@ -7,10 +7,10 @@ The original game has been frozen in the **ludum_dare** branch. Checkout this br
 
 
 ## Links
-* Play here
-* [Game page]{http://www.ludumdare.com/compo/ludum-dare-26/?action=preview&uid=22254} on Ludum Dare
+* Play [here](http://jtuloup.gtomee.com/showcase/ludum_dare_26/)
+* [Game page](http://www.ludumdare.com/compo/ludum-dare-26/?action=preview&uid=22254) on Ludum Dare
 
 ## Screenshot
 Here is a beautiful screenshot:
 
-![Too Many Items](link "Title")
+![Too Many Items](https://raw.github.com/jtuloup/TooManyItems/master/img/tmi1.png "Too Many Items Screenshot")
