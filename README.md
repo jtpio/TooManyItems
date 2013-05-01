@@ -11,6 +11,6 @@ The original game has been frozen in the **ludum_dare** branch. Checkout this br
 * [Game page]{http://www.ludumdare.com/compo/ludum-dare-26/?action=preview&uid=22254} on Ludum Dare
 
 ## Screenshot
-Here is a beautiful screenshot
+Here is a beautiful screenshot:
 
 ![Too Many Items](link "Title")

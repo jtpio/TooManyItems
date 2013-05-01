@@ -3,7 +3,6 @@ define(['Entity'], function(Entity) {
     var Map = function() {
         this.width = 0;
         this.height = 0;
-        this.grid = [];
 
         this.items = ['tv', 'potato'];
         this.nbSourceSpots = Conf.map.nbSourceSpots;
@@ -29,15 +28,6 @@ define(['Entity'], function(Entity) {
             ymin: 0,
             ymax: this.height * this.tileSize
         };
-
-        var i, j = 0;
-        var data, cellSprite = null;
-        for (i = 0; i < this.width; i++) {
-            this.grid.push([]);
-            for (j = 0; j < this.height; j++) {
-                this.grid[i].push(-1);
-            }
-        }
     };
 
     Map.prototype.createSourceSpots = function() {
@@ -61,17 +51,6 @@ define(['Entity'], function(Entity) {
     };
 
     Map.prototype.update = function(camera) {
-        // tiles
-        for (var i = 0; i < this.width; i++) {
-            for (var j = 0; j < this.height; j++) {
-                var cell = this.grid[i][j];
-                if (cell !== -1) {
-                    var newPos = camera.transform(cell.pos);
-                    cell.position.x = newPos.x;
-                    cell.position.y = newPos.y;
-                }
-            }
-        }
         // source spots
         for (var s = 0; s < this.sourceSpots.length; s++) {
             var source = this.sourceSpots[s];
@@ -87,20 +66,6 @@ define(['Entity'], function(Entity) {
         gridPos.y = Math.floor(worldPosition.pos.y / this.tileSize);
         gridPos.w = gridPos.h = this.tileSize;
         return gridPos;
-    };
-
-    Map.prototype.getAllNeighbors = function(worldPosition) {
-        var gridPos = this.getGridPosision(worldPosition);
-        var neighbors = [];
-        for (var i = gridPos.x-1; i <= gridPos.x+1; i++) {
-            for (var j = gridPos.y-1; j <= gridPos.y+1; j++) {
-                if (i >= 0 && i < this.width && j >= 0 && j < this.height && i != gridPos.x && j != gridPos.y) {
-                    var next = this.grid[i][j];
-                    neighbors.push(next);
-                }
-            }
-        }
-        return neighbors;
     };
 
     return Map;
