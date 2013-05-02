@@ -93,6 +93,7 @@ define(['Enemy'], function(Enemy){
             this.enemiesSprites.removeChild(enemy.sprite);
             this.enemies.splice(this.toDie[i], 1);
             this.nb--;
+            this.game.sound.play('death');
         }
     };
 

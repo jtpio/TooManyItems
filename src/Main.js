@@ -36,6 +36,7 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
             'footsteps_1.ogg',
             'footsteps_2.ogg',
             'hurt.ogg',
+            'death.ogg',
             'music_intro.ogg',
             'music_main.ogg'
         ];
