@@ -3,11 +3,25 @@ define(['Enemy'], function(Enemy){
     var EnemyManager = function(game) {
         this.game = game;
         this.nb = 0; // current number of enemies
-        this.enemies = [];
         this.proba = 0.01;
+        this.enemies = [];
         this.enemiesSprites = new PIXI.DisplayObjectContainer();
         this.itemsSprites = new PIXI.DisplayObjectContainer();
         Conf.enemy.speed = Conf.enemy.baseSpeed;
+        this.loadAnimations();
+    };
+
+    EnemyManager.prototype.loadAnimations = function() {
+        this.anims = {};
+
+        var i = 0;
+        // walking
+        var texturesWalking = [];
+        for (i = 0; i < 5; i++)  {
+            var texWalk = PIXI.Texture.fromFrame("oldEnemy_" + (i+1) + ".png");
+            texturesWalking.push(texWalk);
+        }
+        this.anims['walking'] = texturesWalking;
     };
 
     EnemyManager.prototype.addContainersToStage = function(stage) {
@@ -72,9 +86,11 @@ define(['Enemy'], function(Enemy){
     };
 
     EnemyManager.prototype.killEnemies = function() {
+        var self = this;
         for (var i = this.toDie.length-1; i >= 0; --i) {
-            this.removeItem(this.enemies[this.toDie[i]]);
-            this.enemiesSprites.removeChild(this.enemies[this.toDie[i]].sprite);
+            var enemy = this.enemies[this.toDie[i]];
+            this.removeItem(enemy);
+            this.enemiesSprites.removeChild(enemy.sprite);
             this.enemies.splice(this.toDie[i], 1);
             this.nb--;
         }
@@ -87,12 +103,7 @@ define(['Enemy'], function(Enemy){
     };
 
     EnemyManager.prototype.spawEnemy = function() {
-        var enemyWalkingTextures = [];
-        for (var i = 0; i < 5; i++)  {
-            var texture = PIXI.Texture.fromFrame("oldEnemy_" + (i+1) + ".png");
-            enemyWalkingTextures.push(texture);
-        }
-        var enemyWalking = new PIXI.MovieClip(enemyWalkingTextures);
+        var enemyWalking = new PIXI.MovieClip(this.anims['walking']);
 
         var enemy = new Enemy(enemyWalking);
         enemy.anchor.x = enemy.anchor.y = 0.5;

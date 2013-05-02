@@ -56,9 +56,57 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":77,"h":112},
 	"sourceSize": {"w":77,"h":112}
 },
+"oldEnemyDead_1.png":
+{
+	"frame": {"x":1107,"y":554,"w":80,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":60},
+	"sourceSize": {"w":80,"h":60}
+},
+"oldEnemyDead_2.png":
+{
+	"frame": {"x":1189,"y":554,"w":80,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":60},
+	"sourceSize": {"w":80,"h":60}
+},
+"oldEnemyDead_3.png":
+{
+	"frame": {"x":1271,"y":554,"w":80,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":60},
+	"sourceSize": {"w":80,"h":60}
+},
+"oldEnemyDead_4.png":
+{
+	"frame": {"x":1353,"y":554,"w":80,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":60},
+	"sourceSize": {"w":80,"h":60}
+},
+"oldEnemyDead_5.png":
+{
+	"frame": {"x":1435,"y":554,"w":80,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":60},
+	"sourceSize": {"w":80,"h":60}
+},
+"oldEnemyDead_6.png":
+{
+	"frame": {"x":1517,"y":554,"w":80,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":60},
+	"sourceSize": {"w":80,"h":60}
+},
 "oldEnemy_1.png":
 {
-	"frame": {"x":1107,"y":554,"w":65,"h":56},
+	"frame": {"x":1599,"y":554,"w":65,"h":56},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":56},
@@ -66,7 +114,7 @@
 },
 "oldEnemy_2.png":
 {
-	"frame": {"x":1174,"y":554,"w":65,"h":56},
+	"frame": {"x":1666,"y":554,"w":65,"h":56},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":56},
@@ -74,7 +122,7 @@
 },
 "oldEnemy_3.png":
 {
-	"frame": {"x":1241,"y":554,"w":65,"h":56},
+	"frame": {"x":1733,"y":554,"w":65,"h":56},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":56},
@@ -82,7 +130,7 @@
 },
 "oldEnemy_4.png":
 {
-	"frame": {"x":1241,"y":554,"w":65,"h":56},
+	"frame": {"x":1733,"y":554,"w":65,"h":56},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":56},
@@ -90,7 +138,7 @@
 },
 "oldEnemy_5.png":
 {
-	"frame": {"x":1174,"y":554,"w":65,"h":56},
+	"frame": {"x":1666,"y":554,"w":65,"h":56},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":56},
@@ -98,7 +146,7 @@
 },
 "player.png":
 {
-	"frame": {"x":1308,"y":554,"w":54,"h":71},
+	"frame": {"x":1800,"y":554,"w":54,"h":71},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":54,"h":71},
@@ -106,7 +154,7 @@
 },
 "player_noweapon.png":
 {
-	"frame": {"x":1364,"y":554,"w":59,"h":51},
+	"frame": {"x":1856,"y":554,"w":59,"h":51},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":59,"h":51},
@@ -114,7 +162,7 @@
 },
 "potato.png":
 {
-	"frame": {"x":1425,"y":554,"w":28,"h":36},
+	"frame": {"x":1917,"y":554,"w":28,"h":36},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":36},
@@ -122,7 +170,7 @@
 },
 "potato_source.png":
 {
-	"frame": {"x":1455,"y":554,"w":108,"h":91},
+	"frame": {"x":2,"y":1106,"w":108,"h":91},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":108,"h":91},
@@ -130,7 +178,7 @@
 },
 "tiles.png":
 {
-	"frame": {"x":1565,"y":554,"w":64,"h":64},
+	"frame": {"x":112,"y":1106,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -138,7 +186,7 @@
 },
 "tv.png":
 {
-	"frame": {"x":1631,"y":554,"w":64,"h":48},
+	"frame": {"x":178,"y":1106,"w":64,"h":48},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":48},
@@ -146,7 +194,7 @@
 },
 "tv_bg.png":
 {
-	"frame": {"x":1697,"y":554,"w":123,"h":86},
+	"frame": {"x":244,"y":1106,"w":123,"h":86},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":123,"h":86},
@@ -154,7 +202,7 @@
 },
 "tv_source.png":
 {
-	"frame": {"x":2,"y":1106,"w":251,"h":175},
+	"frame": {"x":369,"y":1106,"w":251,"h":175},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":251,"h":175},
