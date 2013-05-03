@@ -33,15 +33,22 @@ define(['Entity'], function(Entity) {
     Map.prototype.createSourceSpots = function() {
         this.sourceSpots = [];
         for (var i = 0; i < this.nbSourceSpots; i++) {
-            var xSource = Utils.random(2, this.width-2);
-            var ySource = Utils.random(2, this.height-2);
             var r = Utils.random(0,this.items.length);
             var source = new Entity(PIXI.Sprite.fromFrame(this.items[r]+"_source.png"));
-            source.pos.x = xSource * this.tileSize;
-            source.pos.y = ySource * this.tileSize;
             source.anchor.x = source.anchor.y = 0.5;
             source.item = this.items[r];
             this.sourceSpots.push(source);
+        }
+
+        this.init();
+    };
+
+    Map.prototype.init = function() {
+        for (var s = 0; s < this.sourceSpots.length; s++) {
+            var xSource = Utils.random(2, this.width-2);
+            var ySource = Utils.random(2, this.height-2);
+            this.sourceSpots[s].pos.x = xSource * this.tileSize;
+            this.sourceSpots[s].pos.y = ySource * this.tileSize;
         }
     };
 

@@ -62,7 +62,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.tilingSprite.tileScale.x = 1;
         this.tilingSprite.tileScale.y = 1;
         // reset map
-        // TODO
+        this.map.init();
 
         // initialize camera
         this.camera.init(this.map.bounds);
