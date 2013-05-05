@@ -114,11 +114,11 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
     };
 
     Game.prototype.setupInputs = function(firstLoad) {
-        if (!firstLoad) return;
         var self = this;
-
         this.offsetCanvasX = $('canvas').offset().left;
         this.offsetCanvasY = $('canvas').offset().top;
+
+        if (!firstLoad) return;
 
         this.renderer.renderer.view.addEventListener("mousemove", function(data) {
             var realData = {
@@ -151,7 +151,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
     };
 
     Game.prototype.start = function() {
-        this.input = new Input();
+        this.setupInputs(false);
         this.endText.visible = false;
         this.restartText.visible = false;
         this.endText.setInteractive(false);
@@ -166,7 +166,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
 
      Game.prototype.restart = function() {
         this.dispose();
-        this.reset();
+        this.reset(false);
         this.start();
      };
 

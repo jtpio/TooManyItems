@@ -99,7 +99,8 @@ define(['Renderer', 'Physics', 'Sound', 'Home', 'Intro', 'Game'], function(Rende
             // start with home
             self.home.show();
 
-            $("#loading").html("");
+            $("#loading").remove();
+
         };
 
         loader.load();
