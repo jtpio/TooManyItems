@@ -113,20 +113,21 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
         this.restartText.anchor.x = this.restartText.anchor.y = 0.5;
     };
 
-    Game.prototype.setupInputs = function(firstLoad) {
+    Game.prototype.setupInputs = function() {
         var self = this;
         this.offsetCanvasX = $('canvas').offset().left;
         this.offsetCanvasY = $('canvas').offset().top;
 
-        if (!firstLoad) return;
-
-        this.renderer.renderer.view.addEventListener("mousemove", function(data) {
+        var moveListener = function(data) {
             var realData = {
                 x: Math.max(1, data.pageX - self.offsetCanvasX),
                 y: Math.max(1, data.pageY - self.offsetCanvasY)
             };
             self.mouse = realData;
-        }, true);
+        };
+
+        this.renderer.renderer.view.removeEventListener("mousemove", moveListener, true);
+        this.renderer.renderer.view.addEventListener("mousemove", moveListener, true);
 
         this.clickListener = function(data) {
             if (self.focus && self.player.state == Conf.player.states.PLAYING) {
@@ -151,7 +152,7 @@ define(['Screen' ,'Input', 'Map', 'Camera', 'Entity', 'Player', 'Enemy', 'EnemyM
     };
 
     Game.prototype.start = function() {
-        this.setupInputs(false);
+        this.setupInputs();
         this.endText.visible = false;
         this.restartText.visible = false;
         this.endText.setInteractive(false);
